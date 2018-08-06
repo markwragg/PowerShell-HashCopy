@@ -12,11 +12,7 @@
 RootModule = 'HashCopy.psm1'
 
 # Version number of this module.
-<<<<<<< HEAD
-ModuleVersion = '1.0.2.1'
-=======
 ModuleVersion = '1.0.3'
->>>>>>> 77d1a1949e2feb732d22ca9d978641839ae93585
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
