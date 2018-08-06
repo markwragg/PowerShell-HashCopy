@@ -4,7 +4,7 @@
 
 This PowerShell module contains a cmdlet for copying specific files between two paths, where those files have been determined to have changed via a computed hash value. This is useful if you need to sync specific file changes from one directory to another but cannot trust the modified date of the files to determine which files have been modified (for example, if the source files has been cloned from a source control system and as a result the modified dates had changed). 
 
-You should of course be confident that if there is a difference between two files, it is the copy you have specified as being in the `-source` path that you want to overwrite the copy in the destination. New files (files that exist in the source but not in the destination) will also be copied across, including any directories in their paths that may be missing in the destination folder.
+You should of course be confident that if there is a difference between two files, it is the copy you have specified as being in the source `-Path` that you want to use to overwrite the copy in the `-Destination` path. New files (files that exist in the source path but not in the destination) will also be copied across, including any directories in their paths that may be missing in the destination folder.
 
 You can syncronise an entire directory tree by using the `-Recurse` parameter.
 

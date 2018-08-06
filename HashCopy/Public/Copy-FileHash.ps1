@@ -17,7 +17,7 @@ function Copy-FileHash {
 
         .PARAMETER Destination
             The Destination file or folder to compare to source and overwrite with any changed or new files.
-        
+
         .PARAMETER Recurse
             Indicates that this cmdlet performs a recursive copy.
 
@@ -52,9 +52,9 @@ function Copy-FileHash {
     $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File).FullName
 
     ForEach ($SourceFile in $SourceFiles) {
-        
+
         $DestFile = $SourceFile -Replace "^$([Regex]::Escape($Source))", $Destination
-        
+
         If ((-Not (Test-Path $DestFile)) -and $PSCmdlet.ShouldProcess($DestFile, 'New-Item')) {
             #Using New-Item -Force creates an initial destination file along with any folders missing from its path.
             New-Item -Path $DestFile -Force | Out-Null
@@ -62,7 +62,7 @@ function Copy-FileHash {
 
         $SourceHash = (Get-FileHash $SourceFile).hash
         $DestHash = (Get-FileHash $DestFile).hash
-        
+
         If (($SourceHash -ne $DestHash) -and $PSCmdlet.ShouldProcess($SourceFile, 'Copy-Item')) {
             Copy-Item -Path $SourceFile -Destination $DestFile -Force:$Force
         }
