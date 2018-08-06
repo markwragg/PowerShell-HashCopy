@@ -15,8 +15,21 @@ function Copy-FileHash {
         .PARAMETER Path
             The path to the source file/s or folder/s to copy any new or changed files from.
 
+        .PARAMETER LiteralPath
+            The literal path to the source file/s or folder/s to copy any new or changed files from. nlike the Path parameter, the value of
+            LiteralPath is used exactly as it is typed. No characters are interpreted as wildcards.
+
         .PARAMETER Destination
             The Destination file or folder to compare to -Path and overwrite with any changed or new files from -Path.
+
+        .PARAMETER Algorithm
+            Specifies the cryptographic hash function to use for computing the hash value of the contents of the specified file. A cryptographic
+            hash function includes the property that it is not possible to find two distinct inputs that generate the same hash values. Hash
+            functions are commonly used with digital signatures and for data integrity. The acceptable values for this parameter are:
+
+            SHA1 | SHA256 | SHA384 | SHA512 | MACTripleDES | MD5 | RIPEMD160
+
+            If no value is specified, or if the parameter is omitted, the default value is SHA256.
 
         .PARAMETER PassThru
             Returns the output of the file copy as an object. By default, this cmdlet does not generate any output.
@@ -32,15 +45,24 @@ function Copy-FileHash {
     #>
     [cmdletbinding(SupportsShouldProcess)]
     param(
-        [Parameter(Mandatory,ParameterSetName='Path')]
+        [Parameter(Mandatory, ParameterSetName = 'Path')]
         [ValidateScript( {if (Test-Path $_) {$True} Else { Throw '-Path must be a valid path.'} })]
         [String]
         $Path,
+
+        [Parameter(Mandatory, ParameterSetName = 'LiteralPath')]
+        [ValidateScript( {if (Test-Path $_) {$True} Else { Throw '-LiteralPath must be a valid path.'} })]
+        [String]
+        $LiteralPath,
 
         [Parameter(Mandatory)]
         [ValidateScript( {if (Test-Path $_ -IsValid) {$True} Else { Throw '-Destination must be a valid path.' } })]
         [String]
         $Destination,
+
+        [ValidateSet('SHA1', 'SHA256', 'SHA384', 'SHA512', 'MACTripleDES', 'MD5', 'RIPEMD160')]
+        [String]
+        $Algorithm = 'SHA256',
 
         [switch]
         $PassThru,
@@ -52,7 +74,13 @@ function Copy-FileHash {
         $Force
     )
 
-    $Source = (Get-Item $Path).FullName
+    $Source = If ($PSBoundParameters.ContainsKey('LiteralPath')) {
+        (Get-Item -LiteralPath $Path).FullName
+    }
+    Else {
+        (Get-Item -Path $Path).FullName
+    }
+
     $Destination = (Get-Item $Destination).FullName
     $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File).FullName
 
@@ -65,8 +93,8 @@ function Copy-FileHash {
             New-Item -Path $DestFile -Force | Out-Null
         }
 
-        $SourceHash = (Get-FileHash $SourceFile).hash
-        $DestHash = (Get-FileHash $DestFile).hash
+        $SourceHash = (Get-FileHash $SourceFile -Algorithm $Algorithm).hash
+        $DestHash = (Get-FileHash $DestFile -Algorithm $Algorithm).hash
 
         If (($SourceHash -ne $DestHash) -and $PSCmdlet.ShouldProcess($SourceFile, 'Copy-Item')) {
             Copy-Item -Path $SourceFile -Destination $DestFile -Force:$Force -PassThru:$PassThru
