@@ -150,6 +150,16 @@ Describe "Copy-FileHash PS$PSVersion" {
         }
     }
 
+    Context 'Copy-FileHash with Invalid -LiteralPath input' {
+
+        It 'Copy-FileHash should throw "-LiteralPath must be a valid path." for a missing path' {
+            {Copy-FileHash -LiteralPath 'C:\temp\fake\path\not\exist' -Destination 'TestDrive:\'} | Should -Throw '-LiteralPath must be a valid path.'
+        }
+        It 'Copy-FileHash should throw "-LiteralPath must be a valid path." for an invalid path' {
+            {Copy-FileHash -LiteralPath 'z:|invalid<path' -Destination 'TestDrive:\'} | Should -Throw '-LiteralPath must be a valid path.'
+        }
+    }
+
     Context 'Copy-FileHash with Invalid -Destination input' {
 
         It 'Copy-FileHash should throw "-Destination must be a valid path." for an invalid path' {
