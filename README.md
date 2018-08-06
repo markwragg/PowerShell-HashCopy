@@ -18,13 +18,37 @@ Install-Module HashCopy -Scope CurrentUser
 
 ## Usage
 
-You can use the `Copy-FileHash` cmdlet by providing it with a `-Source` and `-Destination` path:
-
+You can use the `Copy-FileHash` cmdlet to sync a single path by providing it with `-Path` and `-Destination` parameters:
 ```
-Copy-FileHash -Source C:\Some\Files -Destination D:\Some\Other\Files -Recurse
+Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files
 ```
-
 This will compute the hash for all files in each directory (and all sub-directories, due to `-Recurse`) via the `Get-FileHash` cmdlet and then will copy any changed and new files from the source path to the destination path. 
+
+You can include all the sub-folders of the source `-Path` by adding `-Recurse`:
+```
+Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Recurse
+```
+
+You can specify a `-LiteralPath` instead of a Path if you want to avoid wildcard characters from being interpreted as such:
+```
+Copy-FileHash -LiteralPath C:\Some\Files -Destination D:\Some\Other\Files -Recurse
+```
+
+You can have the destination file objects returned by adding `-PassThru`:
+```
+Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Recurse -PassThru
+```
+
+You can Force the overwrite of read-only files in the Destination path by adding `-Force`:
+```
+Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Force
+```
+
+You can spcify the algorithm that `Get-FileHash` uses to create the Hash by using `-Algorithm`:
+```
+Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Algorithm MD5
+```
+Valid `-Algorithm` values are: SHA1 | SHA256 | SHA384 | SHA512 | MACTripleDES | MD5 | RIPEMD160.
 
 ## Cmdlets
 
