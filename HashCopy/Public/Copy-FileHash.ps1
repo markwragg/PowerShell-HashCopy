@@ -16,7 +16,7 @@ function Copy-FileHash {
             The path to the source file/s or folder/s to copy any new or changed files from.
 
         .PARAMETER LiteralPath
-            The literal path to the source file/s or folder/s to copy any new or changed files from. nlike the Path parameter, the value of
+            The literal path to the source file/s or folder/s to copy any new or changed files from. Unlike the Path parameter, the value of
             LiteralPath is used exactly as it is typed. No characters are interpreted as wildcards.
 
         .PARAMETER Destination

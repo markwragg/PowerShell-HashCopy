@@ -143,17 +143,17 @@ Describe "Copy-FileHash PS$PSVersion" {
     Context 'Copy-FileHash with Invalid -Path input' {
 
         It 'Copy-FileHash should throw "-Path must be a valid path." for a missing path' {
-            {Copy-FileHash -Path 'C:\temp\fake\path\not\exist' -Destination 'TestDrive:\fake\path'} | Should -Throw '-Path must be a valid path.'
+            {Copy-FileHash -Path 'C:\temp\fake\path\not\exist' -Destination 'TestDrive:\'} | Should -Throw '-Path must be a valid path.'
         }
         It 'Copy-FileHash should throw "-Path must be a valid path." for an invalid path' {
-            {Copy-FileHash -Path 'z:|invalid<path' -Destination 'TestDrive:\fake\path'} | Should -Throw '-Path must be a valid path.'
+            {Copy-FileHash -Path 'z:|invalid<path' -Destination 'TestDrive:\'} | Should -Throw '-Path must be a valid path.'
         }
     }
 
     Context 'Copy-FileHash with Invalid -Destination input' {
 
         It 'Copy-FileHash should throw "-Destination must be a valid path." for an invalid path' {
-            {Copy-FileHash -Path 'C:\temp' -Destination 'z:|invalid<path'} | Should -Throw '-Destination must be a valid path.'
+            {Copy-FileHash -Path 'TestDrive:\' -Destination 'z:|invalid<path'} | Should -Throw "Cannot validate argument on parameter 'Destination'. -Destination must be a valid path."
         }
     }
 }
