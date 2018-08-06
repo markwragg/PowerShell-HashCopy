@@ -8,32 +8,32 @@ $PSVersion = $PSVersionTable.PSVersion.Major
 Describe "Copy-FileHash PS$PSVersion" {
     
     $CopyParams1 = @{
-        Source      = 'TestDrive:\TempSource'
+        Path      = 'TestDrive:\TempSource'
         Destination = 'TestDrive:\TempDest'
         Recurse      = $true
     }
     $CopyParams2 = @{
-        Source      = 'TestDrive:\TempSource\Temp2\Temp3'
+        Path      = 'TestDrive:\TempSource\Temp2\Temp3'
         Destination = 'TestDrive:\TempDest'
         Recurse      = $true
     }
     $CopyParams3 = @{
-        Source      = 'TestDrive:\TempSource'
+        Path      = 'TestDrive:\TempSource'
         Destination = 'TestDrive:\TempDest\Temp2\Temp3'
         Recurse      = $true
     }
     
     $CopyParams1,$CopyParams2,$CopyParams3 | ForEach-Object {
         
-        Context "Copy-FileHash -Source $($_.Source) -Destination $($_.Destination) -Recurse:$($_.Recurse)" {
+        Context "Copy-FileHash -Path $($_.Path) -Destination $($_.Destination) -Recurse:$($_.Recurse)" {
             $CopyParams = $_
 
-            New-Item -ItemType Directory $CopyParams.Source
+            New-Item -ItemType Directory $CopyParams.Path
             New-Item -ItemType Directory $CopyParams.Destination
 
             Context 'New file to copy and existing file to modify' {
-                New-Item "$($CopyParams.Source)\somenewfile.txt"
-                'newcontent' | Out-File "$($CopyParams.Source)\someoriginalfile.txt"
+                New-Item "$($CopyParams.Path)\somenewfile.txt"
+                'newcontent' | Out-File "$($CopyParams.Path)\someoriginalfile.txt"
                 'oldcontent' | Out-File "$($CopyParams.Destination)\someoriginalfile.txt"
 
                 It 'Copy-FileHash should return null' {
@@ -48,8 +48,8 @@ Describe "Copy-FileHash PS$PSVersion" {
             }
 
             Context 'New file in subdirectory with existing file in root' {
-                New-Item -ItemType Directory "$($CopyParams.Source)\Somesubdir"
-                New-Item  "$($CopyParams.Source)\Somesubdir\someoriginalfile.txt"
+                New-Item -ItemType Directory "$($CopyParams.Path)\Somesubdir"
+                New-Item  "$($CopyParams.Path)\Somesubdir\someoriginalfile.txt"
                 'oldcontent' | Out-File "$($CopyParams.Destination)\someoriginalfile.txt"
             
                 It 'Copy-FileHash should return null' {
@@ -64,9 +64,9 @@ Describe "Copy-FileHash PS$PSVersion" {
             }
 
             Context 'New file in subdirectory two levels deep' {
-                New-Item -ItemType Directory "$($CopyParams.Source)\Somedir"
-                New-Item -ItemType Directory "$($CopyParams.Source)\Somedir\Someotherdir"
-                New-Item  "$($CopyParams.Source)\Somedir\Someotherdir\someoriginalfile.txt"
+                New-Item -ItemType Directory "$($CopyParams.Path)\Somedir"
+                New-Item -ItemType Directory "$($CopyParams.Path)\Somedir\Someotherdir"
+                New-Item  "$($CopyParams.Path)\Somedir\Someotherdir\someoriginalfile.txt"
                 'oldcontent' | Out-File "$($CopyParams.Destination)\someoriginalfile.txt"
             
                 It 'Copy-FileHash should return null' {
@@ -81,7 +81,7 @@ Describe "Copy-FileHash PS$PSVersion" {
             }
 
             Context 'No file changes needed with a single file' {
-                'onecontent' | Out-File "$($CopyParams.Source)\someoriginalfile.txt"
+                'onecontent' | Out-File "$($CopyParams.Path)\someoriginalfile.txt"
                 'onecontent' | Out-File "$($CopyParams.Destination)\someoriginalfile.txt"
                 
                 It 'Copy-FileHash should return null"' {
@@ -93,9 +93,9 @@ Describe "Copy-FileHash PS$PSVersion" {
             }
 
             Context 'No file changes needed with multiple files' {
-                'onecontent' | Out-File "$($CopyParams.Source)\someoriginalfile.txt"
+                'onecontent' | Out-File "$($CopyParams.Path)\someoriginalfile.txt"
                 'onecontent' | Out-File "$($CopyParams.Destination)\someoriginalfile.txt"
-                'twocontent' | Out-File "$($CopyParams.Source)\someotherfile.txt"
+                'twocontent' | Out-File "$($CopyParams.Path)\someotherfile.txt"
                 'twocontent' | Out-File "$($CopyParams.Destination)\someotherfile.txt"
                 
                 It 'Copy-FileHash should return null"' {
@@ -110,7 +110,7 @@ Describe "Copy-FileHash PS$PSVersion" {
             }
 
             Context 'Destination folder empty' {
-                'oldcontent' | Out-File "$($CopyParams.Source)\someoriginalfile.txt"
+                'oldcontent' | Out-File "$($CopyParams.Path)\someoriginalfile.txt"
 
                 It 'The destination folder should be empty before performing a copy' {
                     Get-ChildItem "$($CopyParams.Destination)\" | Should -Be $null
@@ -127,7 +127,7 @@ Describe "Copy-FileHash PS$PSVersion" {
                 'oldcontent' | Out-File "$($CopyParams.Destination)\someoriginalfile.txt"
 
                 It 'The source folder should be empty before performing a copy' {
-                    Get-ChildItem "$($CopyParams.Source)\" | Should -Be $null
+                    Get-ChildItem "$($CopyParams.Path)\" | Should -Be $null
                 }
                 It 'Copy-FileHash should return null' {
                     Copy-FileHash @CopyParams | Should -Be $Null
