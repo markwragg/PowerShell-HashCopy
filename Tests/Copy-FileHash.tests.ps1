@@ -9,22 +9,22 @@ If (-not (Get-Module $Module)) { Import-Module "$Root\$Module" -Force }
 Describe "Copy-FileHash PS$PSVersion" {
     
     $CopyParams1 = @{
-        Path      = 'TestDrive:\TempSource'
+        Path        = 'TestDrive:\TempSource'
         Destination = 'TestDrive:\TempDest'
-        Recurse      = $true
+        Recurse     = $true
     }
     $CopyParams2 = @{
-        Path      = 'TestDrive:\TempSource\Temp2\Temp3'
+        Path        = 'TestDrive:\TempSource\Temp2\Temp3'
         Destination = 'TestDrive:\TempDest'
-        Recurse      = $true
+        Recurse     = $true
     }
     $CopyParams3 = @{
-        Path      = 'TestDrive:\TempSource'
+        Path        = 'TestDrive:\TempSource'
         Destination = 'TestDrive:\TempDest\Temp2\Temp3'
-        Recurse      = $true
+        Recurse     = $true
     }
 
-    $CopyParams1,$CopyParams2,$CopyParams3 | ForEach-Object {
+    $CopyParams1, $CopyParams2, $CopyParams3 | ForEach-Object {
         
         Context "Copy-FileHash -Path $($_.Path) -Destination $($_.Destination) -Recurse:$($_.Recurse)" {
             $CopyParams = $_
@@ -139,7 +139,35 @@ Describe "Copy-FileHash PS$PSVersion" {
             }
         }
     }    
+
+    Context 'Copy-FileHash -LiteralPath TestDrive:\SomePath' {
+
+        $CopyLiteralParams = @{
+            LiteralPath = 'TestDrive:\LiteralTempSource'
+            Destination = 'TestDrive:\LiteralTempDest'
+            Recurse     = $true
+        }
     
+        New-Item -ItemType Directory $CopyLiteralParams.LiteralPath
+        New-Item -ItemType Directory $CopyLiteralParams.Destination
+    
+        Context 'New file to copy and existing file to modify' {
+            New-Item "$($CopyLiteralParams.LiteralPath)\somenewfile.txt"
+            'newcontent' | Out-File "$($CopyLiteralParams.LiteralPath)\someoriginalfile.txt"
+            'oldcontent' | Out-File "$($CopyLiteralParams.Destination)\someoriginalfile.txt"
+    
+            It 'Copy-FileHash should return null' {
+                Copy-FileHash @CopyLiteralParams | Should -Be $Null
+            }
+            It 'Should copy somenewfile.txt to destination' {
+                "$($CopyLiteralParams.Destination)\somenewfile.txt" | Should -Exist
+            }
+            It 'Should update someoriginalfile.txt with newcontent' {
+                "$($CopyLiteralParams.Destination)\someoriginalfile.txt" | Should -FileContentMatchExactly 'newcontent'
+            }
+        }
+    }
+
     Context 'Copy-FileHash with Invalid -Path input' {
 
         It 'Copy-FileHash should throw "-Path must be a valid path." for a missing path' {

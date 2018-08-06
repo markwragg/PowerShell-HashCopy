@@ -75,7 +75,7 @@ function Copy-FileHash {
     )
 
     $Source = If ($PSBoundParameters.ContainsKey('LiteralPath')) {
-        (Get-Item -LiteralPath $Path).FullName
+        (Get-Item -LiteralPath $LiteralPath).FullName
     }
     Else {
         (Get-Item -Path $Path).FullName
