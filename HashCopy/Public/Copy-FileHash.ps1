@@ -20,7 +20,8 @@ function Copy-FileHash {
             LiteralPath is used exactly as it is typed. No characters are interpreted as wildcards.
 
         .PARAMETER Destination
-            The Destination file or folder to compare to -Path and overwrite with any changed or new files from -Path.
+            The Destination folder to compare to -Path and overwrite with any changed or new files from -Path. If the folder does not exist
+            It will be created.
 
         .PARAMETER Algorithm
             Specifies the cryptographic hash function to use for computing the hash value of the contents of the specified file. A cryptographic
@@ -56,7 +57,7 @@ function Copy-FileHash {
         $LiteralPath,
 
         [Parameter(Mandatory)]
-        [ValidateScript( {if (Test-Path $_ -IsValid) {$True} Else { Throw '-Destination must be a valid path.' } })]
+        [ValidateScript( {if (Test-Path $_ -PathType Container -IsValid) {$True} Else { Throw '-Destination must be a valid path.' } })]
         [String]
         $Destination,
 
@@ -73,20 +74,26 @@ function Copy-FileHash {
         [switch]
         $Force
     )
+    Try {
+        $Source = If ($PSBoundParameters.ContainsKey('LiteralPath')) {
+            (Get-Item -LiteralPath $LiteralPath).FullName
+        }
+        Else {
+            (Get-Item -Path $Path).FullName
+        }
 
-    $Source = If ($PSBoundParameters.ContainsKey('LiteralPath')) {
-        (Get-Item -LiteralPath $LiteralPath).FullName
-    }
-    Else {
-        (Get-Item -Path $Path).FullName
-    }
+        If (-Not (Test-Path $Destination)){
+            New-Item -Path $Destination -ItemType Container | Out-Null
+        }
 
-    $Destination = (Get-Item $Destination).FullName
-    $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File).FullName
+        $Destination = (Get-Item $Destination).FullName
+        $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File).FullName
+    } Catch {
+        Throw $_
+    }
 
     ForEach ($SourceFile in $SourceFiles) {
-
-        $DestFile = $SourceFile -Replace "^$([Regex]::Escape($Source))", $Destination
+        $DestFile = $SourceFile -Replace "^$([Regex]::Escape($Source))", "$Destination\"
 
         If ((-Not (Test-Path $DestFile)) -and $PSCmdlet.ShouldProcess($DestFile, 'New-Item')) {
             #Using New-Item -Force creates an initial destination file along with any folders missing from its path.
