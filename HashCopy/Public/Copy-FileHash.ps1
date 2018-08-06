@@ -84,6 +84,7 @@ function Copy-FileHash {
 
         If (-Not (Test-Path $Destination)){
             New-Item -Path $Destination -ItemType Container | Out-Null
+            Write-Warning "$Destination did not exist and has been created as a folder path."
         }
 
         $Destination = (Get-Item $Destination).FullName
@@ -97,7 +98,9 @@ function Copy-FileHash {
 
         If ((-Not (Test-Path $DestFile)) -and $PSCmdlet.ShouldProcess($DestFile, 'New-Item')) {
             #Using New-Item -Force creates an initial destination file along with any folders missing from its path.
-            New-Item -Path $DestFile -Force | Out-Null
+            #We use (Get-Date).Ticks to give the file a random value so that it is copied even if the source file is
+            #empty, so that if -PassThru has been used it is returned.
+            New-Item -Path $DestFile -Value (Get-Date).Ticks -Force | Out-Null
         }
 
         $SourceHash = (Get-FileHash $SourceFile -Algorithm $Algorithm).hash
