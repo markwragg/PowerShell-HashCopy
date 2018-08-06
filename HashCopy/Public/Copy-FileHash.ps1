@@ -18,6 +18,9 @@ function Copy-FileHash {
         .PARAMETER Destination
             The Destination file or folder to compare to -Path and overwrite with any changed or new files from -Path.
 
+        .PARAMETER PassThru
+            Returns the output of the file copy as an object. By default, this cmdlet does not generate any output.
+
         .PARAMETER Recurse
             Indicates that this cmdlet performs a recursive copy.
 
@@ -29,20 +32,22 @@ function Copy-FileHash {
     #>
     [cmdletbinding(SupportsShouldProcess)]
     param(
-        [Parameter(Mandatory)]
-        [ValidateScript( {if (Test-Path $_) {$True} Else {Throw '-Path must be a valid path.'} })]
+        [Parameter(Mandatory,ParameterSetName='Path')]
+        [ValidateScript( {if (Test-Path $_) {$True} Else { Throw '-Path must be a valid path.'} })]
         [String]
         $Path,
 
         [Parameter(Mandatory)]
+        [ValidateScript( {if (Test-Path $_ -IsValid) {$True} Else { Throw '-Destination must be a valid path.' } })]
         [String]
         $Destination,
 
-        #Recurse sub-folders
+        [switch]
+        $PassThru,
+
         [switch]
         $Recurse,
 
-        #Enable -Force on Copy-Item
         [switch]
         $Force
     )
@@ -64,7 +69,7 @@ function Copy-FileHash {
         $DestHash = (Get-FileHash $DestFile).hash
 
         If (($SourceHash -ne $DestHash) -and $PSCmdlet.ShouldProcess($SourceFile, 'Copy-Item')) {
-            Copy-Item -Path $SourceFile -Destination $DestFile -Force:$Force
+            Copy-Item -Path $SourceFile -Destination $DestFile -Force:$Force -PassThru:$PassThru
         }
     }
 }
