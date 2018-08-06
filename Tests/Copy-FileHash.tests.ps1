@@ -1,9 +1,10 @@
-$Root = "$(Split-Path $MyInvocation.MyCommand.Path -Parent)\.."
-$Sut = (Get-ChildItem $Root -Include ((Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.') -Recurse).FullName
+if (-not $PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
 
 $PSVersion = $PSVersionTable.PSVersion.Major
+$Root = "$PSScriptRoot\..\"
+$Module = 'HashCopy'
 
-. $Sut
+If (-not (Get-Module $Module)) { Import-Module "$Root\$Module" -Force }
 
 Describe "Copy-FileHash PS$PSVersion" {
     
@@ -22,7 +23,7 @@ Describe "Copy-FileHash PS$PSVersion" {
         Destination = 'TestDrive:\TempDest\Temp2\Temp3'
         Recurse      = $true
     }
-    
+
     $CopyParams1,$CopyParams2,$CopyParams3 | ForEach-Object {
         
         Context "Copy-FileHash -Path $($_.Path) -Destination $($_.Destination) -Recurse:$($_.Recurse)" {
@@ -135,6 +136,16 @@ Describe "Copy-FileHash PS$PSVersion" {
                 It 'The destination folder should now contain someoriginalfile.txt containing "oldcontent"' {
                     "$($CopyParams.Destination)\someoriginalfile.txt" | Should -FileContentMatchExactly 'oldcontent'
                 }
+            }
+        }
+
+        Context 'Copy-FileHash with Invalid -Path input' {
+
+            It 'Copy-FileHash should throw "-Path must be a valid path." for a missing path' {
+                {Copy-FileHash -Path 'z:|invalid<path' -Destination 'TestDrive:\fake\path'} | Should -Throw '-Path must be a valid path.'
+            }
+            It 'Copy-FileHash should throw "-Path must be a valid path." for an invalid path' {
+                {Copy-FileHash -Path 'i' -Destination 'TestDrive:\fake\path'} | Should -Throw '-Path must be a valid path.'
             }
         }
     }     

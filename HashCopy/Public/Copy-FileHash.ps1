@@ -13,10 +13,10 @@ function Copy-FileHash {
             as when cloning a set of files from a source control system.
 
         .PARAMETER Path
-            The Source file or folder to copy any new or changed files from.
+            The path to the source file/s or folder/s to copy any new or changed files from.
 
         .PARAMETER Destination
-            The Destination file or folder to compare to source and overwrite with any changed or new files.
+            The Destination file or folder to compare to -Path and overwrite with any changed or new files from -Path.
 
         .PARAMETER Recurse
             Indicates that this cmdlet performs a recursive copy.
@@ -25,12 +25,12 @@ function Copy-FileHash {
             Indicates that this cmdlet will copy items that cannot otherwise be changed, such as copying over a read-only file or alias.
 
         .EXAMPLE
-            Copy-FileHash -Source C:\Some\Files -Destination D:\Some\Other\Files -Recurse
+            Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Recurse
     #>
     [cmdletbinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)]
-        [ValidateScript( {if (Test-Path $_) {$True} Else {Throw '-Source must be a valid path.'} })]
+        [ValidateScript( {if (Test-Path $_) {$True} Else {Throw '-Path must be a valid path.'} })]
         [String]
         $Path,
 

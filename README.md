@@ -1,6 +1,6 @@
 # PowerShell-HashCopy
 
-[![Build status](https://ci.appveyor.com/api/projects/status/lqksf9r0bf64dyvt?svg=true)](https://ci.appveyor.com/project/markwragg/powershell-hashcopy) ![Test Coverage](https://img.shields.io/badge/coverage-74%25-orange.svg?maxAge=60)
+[![Build status](https://ci.appveyor.com/api/projects/status/lqksf9r0bf64dyvt?svg=true)](https://ci.appveyor.com/project/markwragg/powershell-hashcopy) ![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg?maxAge=60)
 
 This PowerShell module contains a cmdlet for copying specific files between two paths, where those files have been determined to have changed via a computed hash value. This is useful if you need to sync specific file changes from one directory to another but cannot trust the modified date of the files to determine which files have been modified (for example, if the source files has been cloned from a source control system and as a result the modified dates had changed). 
 
