@@ -76,10 +76,10 @@ function Copy-FileHash {
     )
     Try {
         $Source = If ($PSBoundParameters.ContainsKey('LiteralPath')) {
-            (Get-Item -LiteralPath $LiteralPath).FullName
+            (Resolve-Path -LiteralPath $LiteralPath).Path
         }
         Else {
-            (Get-Item -Path $Path).FullName
+            (Resolve-Path -Path $Path).Path
         }
 
         If (-Not (Test-Path $Destination)){
@@ -87,14 +87,16 @@ function Copy-FileHash {
             Write-Warning "$Destination did not exist and has been created as a folder path."
         }
 
-        $Destination = (Get-Item $Destination).FullName
+        $Destination = Join-Path ((Resolve-Path -Path $Destination).Path) -ChildPath '/'
         $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File).FullName
     } Catch {
         Throw $_
     }
 
     ForEach ($SourceFile in $SourceFiles) {
-        $DestFile = $SourceFile -Replace "^$([Regex]::Escape($Source))", "$Destination\"
+        $DestFile = Join-Path (Split-Path -Parent $SourceFile) -ChildPath '/'
+        $DestFile = $DestFile -Replace "^$([Regex]::Escape($Source))", $Destination
+        $DestFile = Join-Path -Path $DestFile -ChildPath (Split-Path -Leaf $SourceFile)
 
         If ((-Not (Test-Path $DestFile)) -and $PSCmdlet.ShouldProcess($DestFile, 'New-Item')) {
             #Using New-Item -Force creates an initial destination file along with any folders missing from its path.
