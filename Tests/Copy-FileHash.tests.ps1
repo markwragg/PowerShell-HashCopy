@@ -151,7 +151,7 @@ Describe "Copy-FileHash PS$PSVersion" {
         New-Item -ItemType Directory $CopyLiteralParams.Destination
     
         Context 'New file to copy and existing file to modify' {
-            New-Item "$($CopyLiteralParams.LiteralPath)/somenewfile.txt"
+            New-Item (Join-Path $CopyLiteralParams.LiteralPath '/somenewfile.txt')
             'newcontent' | Out-File (Join-Path $CopyLiteralParams.LiteralPath '/someoriginalfile.txt')
             'oldcontent' | Out-File (Join-Path $CopyLiteralParams.Destination '/someoriginalfile.txt')
     
@@ -191,6 +191,25 @@ Describe "Copy-FileHash PS$PSVersion" {
 
         It 'Copy-FileHash should throw "-Destination must be a valid path." for an invalid path' {
             { Copy-FileHash -Path 'TestDrive:/' -Destination 'z:|invalid<path' } | Should -Throw "Cannot validate argument on parameter 'Destination'. -Destination must be a valid path."
+        }
+    }
+
+    $CopyWhatIfParams = @{
+        Path        = Join-Path $TestDrive '/TempSource'
+        Destination = Join-Path $TestDrive '/TempDest'
+        Recurse     = $true
+        WhatIf      = $true
+    }
+
+    Context 'Copy-FileHash -WhatIf' {
+
+        New-Item -ItemType Directory $CopyWhatIfParams.Path
+        New-Item -ItemType Directory $CopyWhatIfParams.Destination
+
+        New-Item (Join-Path $CopyWhatIfParams.Path '/somenewfile.txt') 
+
+        It 'Should not throw when using -WhatIf and a destination file does not exist' {
+            { Copy-FileHash @CopyWhatIfParams } | Should -Not -Throw
         }
     }
 }

@@ -74,7 +74,7 @@ function Copy-FileHash {
         [switch]
         $Force
     )
-    Begin{
+    Begin {
         Try {
             $SourcePath = If ($PSBoundParameters.ContainsKey('LiteralPath')) {
                 (Resolve-Path -LiteralPath $LiteralPath).Path
@@ -83,13 +83,14 @@ function Copy-FileHash {
                 (Resolve-Path -Path $Path).Path
             }
 
-            If (-Not (Test-Path $Destination)){
+            If (-Not (Test-Path $Destination)) {
                 New-Item -Path $Destination -ItemType Container | Out-Null
                 Write-Warning "$Destination did not exist and has been created as a folder path."
             }
 
             $Destination = Join-Path ((Resolve-Path -Path $Destination).Path) -ChildPath '/'
-        } Catch {
+        }
+        Catch {
             Throw $_
         }
     }
@@ -102,15 +103,20 @@ function Copy-FileHash {
                 $DestFile = $DestFile -Replace "^$([Regex]::Escape($Source))", $Destination
                 $DestFile = Join-Path -Path $DestFile -ChildPath (Split-Path -Leaf $SourceFile)
 
-                If ((-Not (Test-Path $DestFile)) -and $PSCmdlet.ShouldProcess($DestFile, 'New-Item')) {
+                $SourceHash = (Get-FileHash $SourceFile -Algorithm $Algorithm).hash
+
+                If (Test-Path $DestFile) {
+                    $DestHash = (Get-FileHash $DestFile -Algorithm $Algorithm).hash
+                }
+                Else {
                     #Using New-Item -Force creates an initial destination file along with any folders missing from its path.
                     #We use (Get-Date).Ticks to give the file a random value so that it is copied even if the source file is
                     #empty, so that if -PassThru has been used it is returned.
-                    New-Item -Path $DestFile -Value (Get-Date).Ticks -Force | Out-Null
+                    If ($PSCmdlet.ShouldProcess($DestFile, 'New-Item')) {
+                        New-Item -Path $DestFile -Value (Get-Date).Ticks -Force | Out-Null
+                    }
+                    $DestHash = $null
                 }
-
-                $SourceHash = (Get-FileHash $SourceFile -Algorithm $Algorithm).hash
-                $DestHash = (Get-FileHash $DestFile -Algorithm $Algorithm).hash
 
                 If (($SourceHash -ne $DestHash) -and $PSCmdlet.ShouldProcess($SourceFile, 'Copy-Item')) {
                     Copy-Item -Path $SourceFile -Destination $DestFile -Force:$Force -PassThru:$PassThru
