@@ -15,7 +15,7 @@ RootModule = 'HashCopy.psm1'
 ModuleVersion = '1.0.14'
 
 # Supported PSEditions
-# CompatiblePSEditions = @()
+CompatiblePSEditions = 'Desktop', 'Core'
 
 # ID used to uniquely identify this module
 GUID = '0a6e0c6e-1eb3-4c5e-aa2f-d88339b8a7bc'
