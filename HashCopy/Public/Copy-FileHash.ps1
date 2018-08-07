@@ -1,7 +1,7 @@
 function Copy-FileHash {
     <#
         .SYNOPSIS
-            Copies an item from one location to another based on determining change via computed hash value.
+            Copies files from one location to another based on determining change via computed hash value.
 
         .DESCRIPTION
             The Copy-FileHash cmdlet uses the Get-FileHash cmdlet to compute the hash value of one or more files and then copies any changed
@@ -46,14 +46,14 @@ function Copy-FileHash {
     #>
     [cmdletbinding(SupportsShouldProcess)]
     param(
-        [Parameter(Mandatory, ParameterSetName = 'Path')]
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, ParameterSetName = 'Path')]
         [ValidateScript( {if (Test-Path $_) {$True} Else { Throw '-Path must be a valid path.'} })]
-        [String]
+        [String[]]
         $Path,
 
-        [Parameter(Mandatory, ParameterSetName = 'LiteralPath')]
+        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName = 'LiteralPath')]
         [ValidateScript( {if (Test-Path $_) {$True} Else { Throw '-LiteralPath must be a valid path.'} })]
-        [String]
+        [String[]]
         $LiteralPath,
 
         [Parameter(Mandatory)]
@@ -74,42 +74,48 @@ function Copy-FileHash {
         [switch]
         $Force
     )
-    Try {
-        $Source = If ($PSBoundParameters.ContainsKey('LiteralPath')) {
-            (Resolve-Path -LiteralPath $LiteralPath).Path
-        }
-        Else {
-            (Resolve-Path -Path $Path).Path
-        }
+    Begin{
+        Try {
+            $SourcePath = If ($PSBoundParameters.ContainsKey('LiteralPath')) {
+                (Resolve-Path -LiteralPath $LiteralPath).Path
+            }
+            Else {
+                (Resolve-Path -Path $Path).Path
+            }
 
-        If (-Not (Test-Path $Destination)){
-            New-Item -Path $Destination -ItemType Container | Out-Null
-            Write-Warning "$Destination did not exist and has been created as a folder path."
-        }
+            If (-Not (Test-Path $Destination)){
+                New-Item -Path $Destination -ItemType Container | Out-Null
+                Write-Warning "$Destination did not exist and has been created as a folder path."
+            }
 
-        $Destination = Join-Path ((Resolve-Path -Path $Destination).Path) -ChildPath '/'
-        $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File).FullName
-    } Catch {
-        Throw $_
+            $Destination = Join-Path ((Resolve-Path -Path $Destination).Path) -ChildPath '/'
+        } Catch {
+            Throw $_
+        }
     }
+    Process {
+        ForEach ($Source in $SourcePath) {
+            $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File).FullName
 
-    ForEach ($SourceFile in $SourceFiles) {
-        $DestFile = Join-Path (Split-Path -Parent $SourceFile) -ChildPath '/'
-        $DestFile = $DestFile -Replace "^$([Regex]::Escape($Source))", $Destination
-        $DestFile = Join-Path -Path $DestFile -ChildPath (Split-Path -Leaf $SourceFile)
+            ForEach ($SourceFile in $SourceFiles) {
+                $DestFile = Join-Path (Split-Path -Parent $SourceFile) -ChildPath '/'
+                $DestFile = $DestFile -Replace "^$([Regex]::Escape($Source))", $Destination
+                $DestFile = Join-Path -Path $DestFile -ChildPath (Split-Path -Leaf $SourceFile)
 
-        If ((-Not (Test-Path $DestFile)) -and $PSCmdlet.ShouldProcess($DestFile, 'New-Item')) {
-            #Using New-Item -Force creates an initial destination file along with any folders missing from its path.
-            #We use (Get-Date).Ticks to give the file a random value so that it is copied even if the source file is
-            #empty, so that if -PassThru has been used it is returned.
-            New-Item -Path $DestFile -Value (Get-Date).Ticks -Force | Out-Null
-        }
+                If ((-Not (Test-Path $DestFile)) -and $PSCmdlet.ShouldProcess($DestFile, 'New-Item')) {
+                    #Using New-Item -Force creates an initial destination file along with any folders missing from its path.
+                    #We use (Get-Date).Ticks to give the file a random value so that it is copied even if the source file is
+                    #empty, so that if -PassThru has been used it is returned.
+                    New-Item -Path $DestFile -Value (Get-Date).Ticks -Force | Out-Null
+                }
 
-        $SourceHash = (Get-FileHash $SourceFile -Algorithm $Algorithm).hash
-        $DestHash = (Get-FileHash $DestFile -Algorithm $Algorithm).hash
+                $SourceHash = (Get-FileHash $SourceFile -Algorithm $Algorithm).hash
+                $DestHash = (Get-FileHash $DestFile -Algorithm $Algorithm).hash
 
-        If (($SourceHash -ne $DestHash) -and $PSCmdlet.ShouldProcess($SourceFile, 'Copy-Item')) {
-            Copy-Item -Path $SourceFile -Destination $DestFile -Force:$Force -PassThru:$PassThru
+                If (($SourceHash -ne $DestHash) -and $PSCmdlet.ShouldProcess($SourceFile, 'Copy-Item')) {
+                    Copy-Item -Path $SourceFile -Destination $DestFile -Force:$Force -PassThru:$PassThru
+                }
+            }
         }
     }
 }
