@@ -27,7 +27,7 @@ test_script:
 
 on_success:
   - cmd: git config --global credential.helper store
-  - ps: if ($isWindows) { Add-Content "$HOME\.git-credentials" "https://$($env:GitToken):x-oauth-basic@github.com`n" }
+  - ps: if (-not $isLinux) { Add-Content "$HOME\.git-credentials" "https://$($env:GitToken):x-oauth-basic@github.com`n" }
   - cmd: git config --global user.email "build@appveyor.com"
   - cmd: git config --global user.name "Appveyor"
   - cmd: git checkout %APPVEYOR_REPO_BRANCH%
