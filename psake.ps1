@@ -92,27 +92,31 @@ Task Build -Depends Test {
 
 Task Deploy -Depends Build {
     '----------------------------------------------------------------------'
-    # Update Manifest version number
-    $ManifestPath = $Env:BHPSModuleManifest
-    
-    if (-Not $env:APPVEYOR_BUILD_VERSION) {
-        $Manifest = Test-ModuleManifest -Path $manifestPath
-        [System.Version]$Version = $Manifest.Version
-        [String]$NewVersion = New-Object -TypeName System.Version -ArgumentList ($Version.Major, $Version.Minor, $Version.Build, ($Version.Revision+1))
-    } 
-    else {
-        $NewVersion = $env:APPVEYOR_BUILD_VERSION
-    }
-    "New Version: $NewVersion"
+    #Skip deployment if we're testing on core.
+    if ($psversiontable.psedition -ne 'Core'){
 
-    $FunctionList = @((Get-ChildItem -File -Recurse -Path (Join-Path $Env:BHModulePath '/Public')).BaseName)
+        # Update Manifest version number
+        $ManifestPath = $Env:BHPSModuleManifest
+        
+        if (-Not $env:APPVEYOR_BUILD_VERSION) {
+            $Manifest = Test-ModuleManifest -Path $manifestPath
+            [System.Version]$Version = $Manifest.Version
+            [String]$NewVersion = New-Object -TypeName System.Version -ArgumentList ($Version.Major, $Version.Minor, $Version.Build, ($Version.Revision+1))
+        } 
+        else {
+            $NewVersion = $env:APPVEYOR_BUILD_VERSION
+        }
+        "New Version: $NewVersion"
 
-    Update-ModuleManifest -Path $ManifestPath -ModuleVersion $NewVersion -FunctionsToExport $functionList
-    
-    $Params = @{
-        Path = $ProjectRoot
-        Force = $true
-        Recurse = $false # We keep psdeploy artifacts, avoid deploying those : )
+        $FunctionList = @((Get-ChildItem -File -Recurse -Path (Join-Path $Env:BHModulePath '/Public')).BaseName)
+
+        Update-ModuleManifest -Path $ManifestPath -ModuleVersion $NewVersion -FunctionsToExport $functionList
+        
+        $Params = @{
+            Path = $ProjectRoot
+            Force = $true
+            Recurse = $false # We keep psdeploy artifacts, avoid deploying those : )
+        }
+        Invoke-PSDeploy @Verbose @Params
     }
-    Invoke-PSDeploy @Verbose @Params
 }
