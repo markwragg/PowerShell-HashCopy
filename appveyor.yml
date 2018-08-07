@@ -10,6 +10,10 @@ environment:
 # Allow WMF5 (i.e. PowerShellGallery functionality)
 #os: WMF 5
 
+image:
+- WMF 5
+- Ubuntu
+
 # Skip on updates to the readme.
 # We can force this by adding [skip ci] or [ci skip] anywhere in commit message 
 skip_commits:
