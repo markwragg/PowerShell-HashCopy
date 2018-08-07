@@ -43,7 +43,8 @@ else
 # Publish to AppVeyor if we're in AppVeyor
 if(
     $env:BHModulePath -and
-    $env:BHBuildSystem -eq 'AppVeyor'
+    $env:BHBuildSystem -eq 'AppVeyor' -and
+    $psversiontable.psedition -ne 'Core'
    )
 {
     Deploy DeveloperBuild {

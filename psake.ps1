@@ -35,17 +35,17 @@ Task Test -Depends Init  {
 
     # Gather test results. Store them in a variable and file
     $CodeFiles = (Get-ChildItem $ENV:BHModulePath -Recurse -Include '*.ps1').FullName
-    $Script:TestResults = Invoke-Pester -Path $ProjectRoot\Tests -CodeCoverage $CodeFiles -PassThru -OutputFormat NUnitXml -OutputFile "$ProjectRoot\$TestFile" -ExcludeTag Integration
+    $Script:TestResults = Invoke-Pester -Path (Join-Path $ProjectRoot '/Tests') -CodeCoverage $CodeFiles -PassThru -OutputFormat NUnitXml -OutputFile (Join-Path $ProjectRoot "/$TestFile") -ExcludeTag Integration
 
     # In Appveyor?  Upload our tests! #Abstract this into a function?
     If($ENV:BHBuildSystem -eq 'AppVeyor')
     {
         (New-Object 'System.Net.WebClient').UploadFile(
             "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
-            "$ProjectRoot\$TestFile" )
+            (Join-Path $ProjectRoot "/$TestFile") )
     }
 
-    Remove-Item "$ProjectRoot\$TestFile" -Force -ErrorAction SilentlyContinue
+    Remove-Item (Join-Path $ProjectRoot "/$TestFile") -Force -ErrorAction SilentlyContinue
 
     # Failed tests?
     # Need to tell psake or it will proceed to the deployment. Danger!
@@ -66,7 +66,7 @@ Task Build -Depends Test {
             $CodeCoverage = 0,
             
             [string]
-            $TextFilePath = "$Env:BHProjectPath\Readme.md"
+            $TextFilePath = (Join-Path $Env:BHProjectPath '/Readme.md')
         )
     
         $BadgeColor = switch ($CodeCoverage) {
