@@ -69,7 +69,7 @@ Description = 'A module for cmdlets related to performing copy operations based 
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Copy-FileHash'
+FunctionsToExport = 'Copy-FileHash','Compare-FileHash'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
@@ -95,7 +95,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'File','Copy','Hash','Sync'
+        Tags = 'File','Copy','Hash','Sync','Compare'
 
         # A URL to the license for this module.
         # LicenseUri = ''
