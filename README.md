@@ -2,7 +2,7 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/lqksf9r0bf64dyvt?svg=true)](https://ci.appveyor.com/project/markwragg/powershell-hashcopy) ![Test Coverage](https://img.shields.io/badge/coverage-91%25-brightgreen.svg?maxAge=60)
 
-This PowerShell module contains a cmdlet for copying specific files between two paths, where those files have been determined to have changed via a computed hash value. This is useful if you need to sync specific file changes from one directory to another but cannot trust the modified date of the files to determine which files have been modified (for example, if the source files has been cloned from a source control system and as a result the modified dates had changed). 
+This PowerShell module contains cmdlets for copying and comparing specific files between two paths, where those files have been determined to have changed via a computed hash value. This is useful if you need to sync specific file changes from one directory to another but cannot trust the modified date of the files to determine which files have been modified (for example, if the source files has been cloned from a source control system and as a result the modified dates had changed). 
 
 You should of course be confident that if there is a difference between two files, it is the copy you have specified as being in the source `-Path` that you want to use to overwrite the copy in the `-Destination` path. New files (files that exist in the source path but not in the destination) will also be copied across, including any directories in their paths that may be missing in the destination folder.
 
@@ -17,6 +17,8 @@ Install-Module HashCopy -Scope CurrentUser
 ```
 
 ## Usage
+
+### Copy-FileHash
 
 You can use the `Copy-FileHash` cmdlet to sync a single path by providing it with `-Path` and `-Destination` parameters:
 ```
@@ -50,10 +52,26 @@ Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Algorithm MD
 ```
 Valid `-Algorithm` values are: SHA1 | SHA256 | SHA384 | SHA512 | MACTripleDES | MD5 | RIPEMD160.
 
+### Compare-FileHash
+
+If you'd like to check which files will be copied from a source path before actually using `Copy-FileHash`, you can use `Compare-FileHash`. This cmdlet outputs file objects for any new or modified file having performed the same comparison as the `Copy-` cmdlet (e.g via using Get-FileHash of the source and destination file to determine if they are different).
+
+Check which files would be copied from one single directory to another:
+```
+Compare-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files
+```
+Check which files would be copied between one directory tree and another (including all sub-directories):
+```
+Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Recurse
+```
+
+As with `Copy-FileHash` you can use `-LiteralPath` instead of `-Path` to have paths interpreted literally.
+
 ## Cmdlets
 
 A full list of cmdlets in this module is provided below for reference. Use `Get-Help <cmdlet name>` with these to learn more about their usage.
 
-Cmdlet        | Description
---------------| -------------------------------------------------------------------------------------------------------
-Copy-FileHash | Copies any files between two directory paths that are new or have changed based on computed hash value.
+Cmdlet           | Description
+-----------------| -------------------------------------------------------------------------------------------------------
+Copy-FileHash    | Copies any files between two directory paths that are new or have changed based on computed hash value.
+Compare-FileHash | Compares files from one location to another based on determining change via computed hash value.
