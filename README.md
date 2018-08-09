@@ -6,7 +6,7 @@ This PowerShell module contains cmdlets for copying and comparing specific files
 
 You should of course be confident that if there is a difference between two files, it is the copy you have specified as being in the source `-Path` that you want to use to overwrite the copy in the `-Destination` path. New files (files that exist in the source path but not in the destination) will also be copied across, including any directories in their paths that may be missing in the destination folder.
 
-You can syncronise an entire directory tree by using the `-Recurse` parameter.
+You can synchronise an entire directory tree by using the `-Recurse` parameter.
 
 # Installation
 
@@ -46,7 +46,7 @@ You can Force the overwrite of read-only files in the Destination path by adding
 Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Force
 ```
 
-You can spcify the algorithm that `Get-FileHash` uses to create the Hash by using `-Algorithm`:
+You can specify the algorithm that `Get-FileHash` uses to create the Hash by using `-Algorithm`:
 ```
 Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Algorithm MD5
 ```
