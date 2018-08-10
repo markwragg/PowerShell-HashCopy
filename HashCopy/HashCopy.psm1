@@ -1,6 +1,7 @@
 ﻿$Public = @( Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1" -Recurse )
+$Private = @( Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" -Recurse )
 
-$Public | ForEach-Object {
+@($Private + $Public) | ForEach-Object {
     try {
         . $_.FullName
     }

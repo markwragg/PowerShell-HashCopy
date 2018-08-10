@@ -99,10 +99,7 @@ function Copy-FileHash {
             $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File).FullName
 
             ForEach ($SourceFile in $SourceFiles) {
-                $DestFile = Join-Path (Split-Path -Parent $SourceFile) -ChildPath '/'
-                $DestFile = $DestFile -Replace "^$([Regex]::Escape($Source))", $Destination
-                $DestFile = Join-Path -Path $DestFile -ChildPath (Split-Path -Leaf $SourceFile)
-
+                $DestFile = Get-DestinationFilePath -File $SourceFile -Source $Source -Destination $Destination
                 $SourceHash = (Get-FileHash $SourceFile -Algorithm $Algorithm).hash
 
                 If (Test-Path $DestFile) {
