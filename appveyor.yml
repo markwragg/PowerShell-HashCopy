@@ -30,7 +30,7 @@ for:
 -
   matrix:
     only:
-      - image: WMF5
+      - image: WMF 5
   
   test_script:
   - ps: .\build.ps1
