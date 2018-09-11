@@ -23,6 +23,9 @@ skip_commits:
 build: false
 
 #Kick off the CI/CD pipeline
+test_script:
+  - pwsh: .\build.ps1
+
 for:
 -
   matrix:
@@ -32,23 +35,8 @@ for:
   test_script:
   - ps: .\build.ps1
 
-for:
--
-  matrix:
-    except:
-      - image: WMF5
-  
-  test_script:
-  - pwsh: .\build.ps1
-
-for:
--
-  matrix:
-    only:
-      - image: Visual Studio 2017
-
   on_success:
-  - pwsh: | 
+  - ps: | 
       if (git status -s) { 
         git config --global credential.helper store
         Add-Content "$HOME/.git-credentials" "https://$($env:GitToken):x-oauth-basic@github.com`n"
