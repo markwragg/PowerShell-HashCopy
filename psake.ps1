@@ -22,7 +22,6 @@ Task Init {
     Set-Location $ProjectRoot
     "Build System Details:"
     Get-Item ENV:BH*
-    $PSVersionTable
     "`n"
 }
 
