@@ -3,8 +3,18 @@
 #$ExcludeRules = ''
 $Rules   = Get-ScriptAnalyzerRule | Where-Object { $_.RuleName -notin $ExcludeRules }
 
-$Scripts = Get-ChildItem "$PSScriptRoot/../" -Filter '*.ps1' -File -Recurse -Exclude '*.tests.ps1','*.psdeploy.ps1','build.ps1','install.ps1','psake.ps1'
+<<<<<<< HEAD
+<<<<<<< HEAD
+$Scripts = Get-ChildItem "$PSScriptRoot/../" -Filter '*.ps1' -File -Recurse -Exclude '*.tests.ps1','*.psdeploy.ps1','build.ps1','install.ps1','psake.ps1','test.ps1','deploy.ps1'
 $Modules = Get-ChildItem "$PSScriptRoot/../" -Filter '*.psm1' -File -Recurse
+=======
+$Scripts = Get-ChildItem "$PSScriptRoot\..\" -Filter '*.ps1' -File -Recurse -Exclude '*.tests.ps1','*.psdeploy.ps1','build.ps1','install.ps1','psake.ps1'
+$Modules = Get-ChildItem "$PSScriptRoot\..\" -Filter '*.psm1' -File -Recurse
+>>>>>>> parent of 77c2e6e... File paths using backslashes
+=======
+$Scripts = Get-ChildItem "$PSScriptRoot\..\" -Filter '*.ps1' -File -Recurse -Exclude '*.tests.ps1','*.psdeploy.ps1','build.ps1','install.ps1','psake.ps1'
+$Modules = Get-ChildItem "$PSScriptRoot\..\" -Filter '*.psm1' -File -Recurse
+>>>>>>> parent of 77c2e6e... File paths using backslashes
 
 If ($Modules.count -gt 0) {
   Describe 'Testing all Modules against default PSScriptAnalyzer rule-set' -Tag Default {
