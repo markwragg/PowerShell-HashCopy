@@ -3,8 +3,8 @@
 #$ExcludeRules = ''
 $Rules   = Get-ScriptAnalyzerRule | Where-Object { $_.RuleName -notin $ExcludeRules }
 
-$Scripts = Get-ChildItem "$PSScriptRoot\..\" -Filter '*.ps1' -File -Recurse -Exclude '*.tests.ps1','*.psdeploy.ps1','build.ps1','install.ps1','psake.ps1'
-$Modules = Get-ChildItem "$PSScriptRoot\..\" -Filter '*.psm1' -File -Recurse
+$Scripts = Get-ChildItem "$PSScriptRoot/../" -Filter '*.ps1' -File -Recurse -Exclude '*.tests.ps1','*.psdeploy.ps1','build.ps1','install.ps1','psake.ps1'
+$Modules = Get-ChildItem "$PSScriptRoot/../" -Filter '*.psm1' -File -Recurse
 
 If ($Modules.count -gt 0) {
   Describe 'Testing all Modules against default PSScriptAnalyzer rule-set' -Tag Default {
