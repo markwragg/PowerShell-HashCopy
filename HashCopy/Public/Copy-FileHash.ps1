@@ -110,7 +110,7 @@ function Copy-FileHash {
                     #We use (Get-Date).Ticks to give the file a random value so that it is copied even if the source file is
                     #empty, so that if -PassThru has been used it is returned.
                     If ($PSCmdlet.ShouldProcess($DestFile, 'New-Item')) {
-                        New-Item -Path $DestFile -Value (Get-Date).Ticks -Force | Out-Null
+                        New-Item -Path $DestFile -Value (Get-Date).Ticks -Force -ItemType "file"| Out-Null
                     }
                     $DestHash = $null
                 }
