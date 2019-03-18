@@ -31,7 +31,7 @@ function Get-DestinationFilePath {
     )
 
     $DestFile = Join-Path (Split-Path -Parent $File) -ChildPath '/'
-    $DestFile = $DestFile -Replace "^$([Regex]::Escape($Source))", $Destination
+    $DestFile = $DestFile -Replace "^$([Regex]::Escape((Convert-Path $Source)))", $Destination
     $DestFile = Join-Path -Path $DestFile -ChildPath (Split-Path -Leaf $File)
 
     Return $DestFile
