@@ -36,6 +36,8 @@ function Compare-FileHash {
 
         .EXAMPLE
             Compare-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Recurse
+
+            Compares the files between the two trees and returns any where they have different contents as determined via hash value comparison.
     #>
     [cmdletbinding()]
     param(
