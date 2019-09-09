@@ -41,7 +41,7 @@ Task 'Init' {
     $lines
 
     Set-Location $ProjectRoot
-    
+
     "Build System Details:"
     Get-Item ENV:BH*
     "`n"
@@ -82,14 +82,19 @@ Task 'CombineFunctionsAndStage' -Depends 'Clean' {
     $combinedModulePath = Join-Path -Path $StagingModulePath -ChildPath "$($env:BHProjectName).psm1"
     @($publicFunctions + $privateFunctions) | Get-Content | Add-Content -Path $combinedModulePath
 
-    # Copy other required folders and files
-    $pathsToCopy = @(
+    # Copy other required folders and files if they exist
+    $PathsToCopy = @(
         Join-Path -Path $ProjectRoot -ChildPath 'Documentation'
-        # Join-Path -Path $ProjectRoot -ChildPath 'Examples'
+        Join-Path -Path $ProjectRoot -ChildPath 'Examples'
         Join-Path -Path $ProjectRoot -ChildPath 'CHANGELOG.md'
         Join-Path -Path $ProjectRoot -ChildPath 'README.md'
     )
-    Copy-Item -Path $pathsToCopy -Destination $StagingFolder -Recurse
+
+    foreach ($Path in $PathsToCopy) {
+        if (Test-Path $Path) {
+            Copy-Item -Path $Path -Destination $StagingFolder -Recurse
+        }
+    }
 
     # Copy existing manifest
     Copy-Item -Path $env:BHPSModuleManifest -Destination $StagingModulePath -Recurse
