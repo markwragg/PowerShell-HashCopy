@@ -36,6 +36,14 @@ steps:
       .\Build\build.ps1 -TaskList 'Test'
     displayName: "Test"
 
+  - task: PublishTestResults@2
+    displayName: "Publish Pester Tests"
+    inputs:
+      testRunner: "NUnit"
+      searchFolder: "Artifacts"
+      testRunTitle: "PesterTests"
+    condition: always()
+
   - powershell: |
       .\Build\build.ps1 -TaskList 'UpdateDocumentation'
     displayName: "Update Documentation"
@@ -51,15 +59,6 @@ steps:
   - powershell: |
       .\Build\build.ps1 -TaskList 'CreateBuildArtifact'
     displayName: "Create Build Artifact"
-
-  # Publish Tasks
-  - task: PublishTestResults@2
-    displayName: "Publish Pester Tests"
-    inputs:
-      testRunner: "NUnit"
-      searchFolder: "Artifacts"
-      testRunTitle: "PesterTests"
-    condition: always()
 
   - task: PublishBuildArtifacts@1
     displayName: "Publish Artifact: PowerShell Module Zipped for offline use"
