@@ -7,7 +7,7 @@ function Get-DestinationFilePath {
             The file to modify.
 
         .PARAMETER Source
-            The source path (this should form part of the base path of the -File).
+            The source directory or file path.
 
         .PARAMETER Destination
             The destination path.
@@ -29,6 +29,10 @@ function Get-DestinationFilePath {
         [String]
         $Destination
     )
+
+    if (Test-Path -Path $Source -PathType leaf) {
+        $Source = Join-Path (Split-Path -Parent $Source) -ChildPath '/'
+    }
 
     $DestFile = Join-Path (Split-Path -Parent $File) -ChildPath '/'
     $DestFile = $DestFile -Replace "^$([Regex]::Escape((Convert-Path $Source)))", $Destination
