@@ -7,14 +7,14 @@ Copies files from one location to another based on determining change via comput
 
 ### Path
 ```
-Copy-FileHash -Path <String[]> -Destination <String> [-Algorithm <String>] [-PassThru] [-Recurse] [-Force]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+Copy-FileHash -Path <String[]> -Destination <String> [-Algorithm <String>] [-PassThru] [-Recurse] [-Mirror]
+ [-Force] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### LiteralPath
 ```
 Copy-FileHash -LiteralPath <String[]> -Destination <String> [-Algorithm <String>] [-PassThru] [-Recurse]
- [-Force] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-Mirror] [-Force] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -132,6 +132,21 @@ Accept wildcard characters: False
 
 ### -Recurse
 Indicates that this cmdlet performs a recursive copy.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Mirror
+Use to remove files from the Destination path that are no longer in any of the Source paths.
 
 ```yaml
 Type: SwitchParameter
