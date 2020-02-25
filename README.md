@@ -36,6 +36,11 @@ You can specify a `-LiteralPath` instead of a Path if you want to avoid wildcard
 Copy-FileHash -LiteralPath C:\Some\Files -Destination D:\Some\Other\Files -Recurse
 ```
 
+You can hremove files from the Destination path that are not in the Source path by adding `-Mirror`:
+```
+Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Mirror
+```
+
 You can have the destination file objects returned by adding `-PassThru`:
 ```
 Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Recurse -PassThru
