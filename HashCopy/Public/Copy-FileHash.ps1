@@ -38,6 +38,9 @@ function Copy-FileHash {
         .PARAMETER Recurse
             Indicates that this cmdlet performs a recursive copy.
 
+        .PARAMETER Mirror
+            Use to remove files from the Destination path that are no longer in any of the Source paths.
+
         .PARAMETER Force
             Indicates that this cmdlet will copy items that cannot otherwise be changed, such as copying over a read-only file or alias.
 
@@ -75,6 +78,9 @@ function Copy-FileHash {
         $Recurse,
 
         [switch]
+        $Mirror,
+
+        [switch]
         $Force
     )
     Begin {
@@ -96,6 +102,11 @@ function Copy-FileHash {
         Catch {
             Throw $_
         }
+
+        If ($Mirror -and ($SourcePath -is [Array])) {
+            Throw 'Cannot use -Mirror with an array of Paths. Specify a single Source path only.'
+        }
+
     }
     Process {
         ForEach ($Source in $SourcePath) {
@@ -120,6 +131,20 @@ function Copy-FileHash {
 
                 If (($SourceHash -ne $DestHash) -and $PSCmdlet.ShouldProcess($SourceFile, 'Copy-Item')) {
                     Copy-Item -Path $SourceFile -Destination $DestFile -Force:$Force -PassThru:$PassThru
+                }
+            }
+
+            if ($Mirror) {
+                $DestFiles = (Get-ChildItem $Destination -Recurse:$Recurse -File).FullName
+    
+                ForEach ($DestFile in $DestFiles) {
+                    $SourceFile = Get-DestinationFilePath -File $DestFile -Source $Destination -Destination $Source
+    
+                    If (-not (Test-Path $SourceFile)) {
+                        If ($PSCmdlet.ShouldProcess($DestFile, 'Remove-Item')) {
+                            Remove-Item $DestFile
+                        }
+                    }
                 }
             }
         }

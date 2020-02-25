@@ -136,6 +136,26 @@ Describe "Copy-FileHash PS$PSVersion" {
                     (Join-Path $CopyParams.Destination '/someoriginalfile.txt') | Should -FileContentMatchExactly 'oldcontent'
                 }
             }
+
+            Context 'Using -Mirror removes files from destination that are not in source' {
+                New-Item (Join-Path $CopyParams.Path '/somenewfile.txt')
+                'newcontent' | Out-File (Join-Path $CopyParams.Path '/someoriginalfile.txt')
+                'oldcontent' | Out-File (Join-Path $CopyParams.Destination '/someoriginalfile.txt')
+                'existingfi' | Out-File (Join-Path $CopyParams.Destination '/someexistingfile.txt')
+                
+                It 'Copy-FileHash should return null' {
+                    Copy-FileHash @CopyParams -Mirror | Should -Be $Null
+                }
+                It 'Should copy somenewfile.txt to destination' {
+                    (Join-Path $CopyParams.Destination '/somenewfile.txt') | Should -Exist
+                }
+                It 'Should update someoriginalfile.txt with newcontent' {
+                    (Join-Path $CopyParams.Destination '/someoriginalfile.txt') | Should -FileContentMatchExactly 'newcontent'
+                }
+                It 'Should remove someexistingfile.txt from the destination' {
+                    (Join-Path $CopyParams.Destination '/someexistingfile.txt') | Should -Not -Exist
+                }
+            }
         }
     }    
 
@@ -163,6 +183,26 @@ Describe "Copy-FileHash PS$PSVersion" {
             }
             It 'Should update someoriginalfile.txt with newcontent' {
                 (Join-Path $CopyLiteralParams.Destination '/someoriginalfile.txt') | Should -FileContentMatchExactly 'newcontent'
+            }
+        }
+
+        Context 'Using -Mirror removes files from destination that are not in source' {
+            New-Item (Join-Path $CopyLiteralParams.LiteralPath '/somenewfile.txt')
+            'newcontent' | Out-File (Join-Path $CopyLiteralParams.LiteralPath '/someoriginalfile.txt')
+            'oldcontent' | Out-File (Join-Path $CopyLiteralParams.Destination '/someoriginalfile.txt')
+            'existingfi' | Out-File (Join-Path $CopyLiteralParams.Destination '/someexistingfile.txt')
+            
+            It 'Copy-FileHash should return null' {
+                Copy-FileHash @CopyLiteralParams -Mirror | Should -Be $Null
+            }
+            It 'Should copy somenewfile.txt to destination' {
+                (Join-Path $CopyLiteralParams.Destination '/somenewfile.txt') | Should -Exist
+            }
+            It 'Should update someoriginalfile.txt with newcontent' {
+                (Join-Path $CopyLiteralParams.Destination '/someoriginalfile.txt') | Should -FileContentMatchExactly 'newcontent'
+            }
+            It 'Should remove someexistingfile.txt from the destination' {
+                (Join-Path $CopyLiteralParams.Destination '/someexistingfile.txt') | Should -Not -Exist
             }
         }
     }
@@ -194,14 +234,14 @@ Describe "Copy-FileHash PS$PSVersion" {
         }
     }
 
-    $CopyWhatIfParams = @{
-        Path        = Join-Path $TestDrive '/TempSource'
-        Destination = Join-Path $TestDrive '/TempDest'
-        Recurse     = $true
-        WhatIf      = $true
-    }
-
     Context 'Copy-FileHash -WhatIf' {
+
+        $CopyWhatIfParams = @{
+            Path        = Join-Path $TestDrive '/TempSource'
+            Destination = Join-Path $TestDrive '/TempDest'
+            Recurse     = $true
+            WhatIf      = $true
+        }  
 
         New-Item -ItemType Directory $CopyWhatIfParams.Path
         New-Item -ItemType Directory $CopyWhatIfParams.Destination
@@ -210,6 +250,23 @@ Describe "Copy-FileHash PS$PSVersion" {
 
         It 'Should not throw when using -WhatIf and a destination file does not exist' {
             { Copy-FileHash @CopyWhatIfParams } | Should -Not -Throw
+        }
+    }
+
+    Context 'Copy-FileHash -Mirror with multiple source paths' {
+
+        $CopyMirrorParams = @{
+            Path        = @((Join-Path $TestDrive '/TempSource1'),(Join-Path $TestDrive '/TempSource2'))
+            Destination = Join-Path $TestDrive '/TempDest'
+            Recurse     = $true
+            Mirror      = $true
+        }
+
+        New-Item -ItemType Directory $CopyMirrorParams.Path
+        New-Item -ItemType Directory $CopyMirrorParams.Destination
+
+        It 'Should throw when using -Mirror with multiple source paths' {
+            { Copy-FileHash @CopyMirrorParams } | Should -Throw
         }
     }
 }
