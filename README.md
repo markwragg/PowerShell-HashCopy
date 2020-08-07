@@ -67,7 +67,7 @@ Compare-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files
 ```
 Check which files would be copied between one directory tree and another (including all sub-directories):
 ```
-Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Recurse
+Compare-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Recurse
 ```
 
 As with `Copy-FileHash` you can use `-LiteralPath` instead of `-Path` to have paths interpreted literally.
