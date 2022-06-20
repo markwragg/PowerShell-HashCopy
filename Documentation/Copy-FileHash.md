@@ -8,7 +8,7 @@ Copies files from one location to another based on determining change via comput
 ### Path
 ```
 Copy-FileHash -Path <String[]> -Destination <String> [-Algorithm <String>] [-PassThru] [-Recurse] [-Mirror]
- [-Force] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-Force] [-WhatIf] [-Confirm] [<CommonParameters>] [-Exclude]
 ```
 
 ### LiteralPath
@@ -141,6 +141,22 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Exclude
+Exclude files from be copied.
+The file list should be seperated with a comma. for example: `test1.txt,test2.txt`
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
