@@ -1,5 +1,9 @@
 # Change Log
 
+## !Deploy
+
+* [Feature] Add `Exclude` parameter to exclude files from be copied.
+
 ## [1.0.55] - 2020-02-25
 
 * [Feature] `Copy-FileHash` now has a `-Mirror` parameter that can be used to remove any files from the Destination folder that are not in the Source path ([#5](https://github.com/markwragg/PowerShell-HashCopy/issues/5)). This has had limited testing so use with caution, always check `-WhatIf` first.
