@@ -74,7 +74,7 @@ function Copy-FileHash {
         [String]
         $Algorithm = 'SHA256',
         
-        [string]
+        [string[]]
         $Exclude,
 
         [switch]
