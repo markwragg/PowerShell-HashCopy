@@ -39,7 +39,7 @@ function Copy-FileHash {
             Indicates that this cmdlet performs a recursive copy.
             
         .PARAMETER Exclude
-            Exclude files from be copied.
+            Exclude one or more files from be copied.
             
         .PARAMETER Mirror
             Use to remove files from the Destination path that are no longer in any of the Source paths.
@@ -116,13 +116,7 @@ function Copy-FileHash {
     }
     Process {
         ForEach ($Source in $SourcePath) {
-            $ExcludeFilesArray = @()
-            $excluded = $Exclude.Split(',')
-            foreach($file in $excluded)
-            {
-               $ExcludeFilesArray += $file
-            }
-            $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File -Exclude $ExcludeFilesArray).FullName
+            $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File -Exclude $Exclude).FullName
 
             ForEach ($SourceFile in $SourceFiles) {
                 $DestFile = Get-DestinationFilePath -File $SourceFile -Source $Source -Destination $Destination
