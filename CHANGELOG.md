@@ -1,6 +1,6 @@
 # Change Log
 
-## !Deploy
+## [1.0.56] - 2023-06-28
 
 * [Feature] Add `Exclude` parameter to exclude files from be copied.
 

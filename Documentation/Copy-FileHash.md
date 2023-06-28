@@ -7,14 +7,14 @@ Copies files from one location to another based on determining change via comput
 
 ### Path
 ```
-Copy-FileHash -Path <String[]> -Destination <String> [-Algorithm <String>] [-PassThru] [-Recurse] [-Mirror]
- [-Force] [-WhatIf] [-Confirm] [<CommonParameters>] [-Exclude]
+Copy-FileHash -Path <String[]> -Destination <String> [-Algorithm <String>] [-Exclude <String[]>] [-PassThru]
+ [-Recurse] [-Mirror] [-Force] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### LiteralPath
 ```
-Copy-FileHash -LiteralPath <String[]> -Destination <String> [-Algorithm <String>] [-PassThru] [-Recurse]
- [-Mirror] [-Force] [-WhatIf] [-Confirm] [<CommonParameters>]
+Copy-FileHash -LiteralPath <String[]> -Destination <String> [-Algorithm <String>] [-Exclude <String[]>]
+ [-PassThru] [-Recurse] [-Mirror] [-Force] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -114,6 +114,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Exclude
+Exclude one or more files from be copied.
+
+```yaml
+Type: String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -PassThru
 Returns the output of the file copy as an object.
 By default, this cmdlet does not generate any output.
@@ -141,21 +156,6 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Exclude
-Exclude files from be copied.
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
