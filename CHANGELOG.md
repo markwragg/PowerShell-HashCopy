@@ -2,7 +2,7 @@
 
 ## [1.0.56] - 2023-06-28
 
-* [Feature] Add `Exclude` parameter to exclude files from be copied.
+* [Feature] `Copy-FileHash` now has an `-Exclude` parameter that can be used to exclude one or more files from being copied. Thanks [@shayki5](https://github.com/shayki5)!
 
 ## [1.0.55] - 2020-02-25
 
