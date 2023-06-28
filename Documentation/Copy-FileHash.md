@@ -147,7 +147,6 @@ Accept wildcard characters: False
 
 ### -Exclude
 Exclude files from be copied.
-The file list should be seperated with a comma. for example: `test1.txt,test2.txt`
 
 ```yaml
 Type: String
