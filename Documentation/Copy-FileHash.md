@@ -115,7 +115,7 @@ Accept wildcard characters: False
 ```
 
 ### -Exclude
-Exclude one or more files from be copied.
+Exclude one or more files from being copied.
 
 ```yaml
 Type: String[]

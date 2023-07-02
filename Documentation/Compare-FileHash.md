@@ -7,13 +7,14 @@ Compares files from one location to another based on determining change via comp
 
 ### Path
 ```
-Compare-FileHash -Path <String[]> -Destination <String> [-Algorithm <String>] [-Recurse] [<CommonParameters>]
+Compare-FileHash -Path <String[]> -Destination <String> [-Algorithm <String>] [-Exclude <String[]>] [-Recurse]
+ [<CommonParameters>]
 ```
 
 ### LiteralPath
 ```
-Compare-FileHash -LiteralPath <String[]> -Destination <String> [-Algorithm <String>] [-Recurse]
- [<CommonParameters>]
+Compare-FileHash -LiteralPath <String[]> -Destination <String> [-Algorithm <String>] [-Exclude <String[]>]
+ [-Recurse] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -106,6 +107,21 @@ Aliases:
 Required: False
 Position: Named
 Default value: SHA256
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Exclude
+Exclude one or more files from being compared.
+
+```yaml
+Type: String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

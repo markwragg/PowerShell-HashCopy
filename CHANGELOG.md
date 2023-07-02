@@ -1,6 +1,6 @@
 # Change Log
 
-## !Deploy
+## [1.0.57] - 2023-07-02
 
 * [Feature] `Compare-FileHash` now has the same `-Exclude` parameter that was added to `Copy-FileHash` for excluding one or more files from the comparison.
 
