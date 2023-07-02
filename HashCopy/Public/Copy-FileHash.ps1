@@ -32,15 +32,15 @@ function Copy-FileHash {
 
             If no value is specified, or if the parameter is omitted, the default value is SHA256.
 
+        .PARAMETER Exclude
+            Exclude one or more files from being copied.
+
         .PARAMETER PassThru
             Returns the output of the file copy as an object. By default, this cmdlet does not generate any output.
 
         .PARAMETER Recurse
             Indicates that this cmdlet performs a recursive copy.
-            
-        .PARAMETER Exclude
-            Exclude one or more files from be copied.
-            
+
         .PARAMETER Mirror
             Use to remove files from the Destination path that are no longer in any of the Source paths.
 
@@ -57,23 +57,23 @@ function Copy-FileHash {
     param(
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, ParameterSetName = 'Path')]
         [ValidateScript( {if (Test-Path $_) {$True} Else { Throw '-Path must be a valid path.'} })]
-        [String[]]
+        [string[]]
         $Path,
 
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName = 'LiteralPath')]
         [ValidateScript( {if (Test-Path $_) {$True} Else { Throw '-LiteralPath must be a valid path.'} })]
-        [String[]]
+        [string[]]
         $LiteralPath,
 
         [Parameter(Mandatory)]
         [ValidateScript( {if (Test-Path $_ -PathType Container -IsValid) {$True} Else { Throw '-Destination must be a valid path.' } })]
-        [String]
+        [string]
         $Destination,
 
         [ValidateSet('SHA1', 'SHA256', 'SHA384', 'SHA512', 'MACTripleDES', 'MD5', 'RIPEMD160')]
-        [String]
+        [string]
         $Algorithm = 'SHA256',
-        
+
         [string[]]
         $Exclude,
 
@@ -89,65 +89,65 @@ function Copy-FileHash {
         [switch]
         $Force
     )
-    Begin {
-        Try {
-            $SourcePath = If ($PSBoundParameters.ContainsKey('LiteralPath')) {
+    begin {
+        try {
+            $SourcePath = if ($PSBoundParameters.ContainsKey('LiteralPath')) {
                 (Resolve-Path -LiteralPath $LiteralPath).Path
             }
-            Else {
+            else {
                 (Resolve-Path -Path $Path).Path
             }
 
-            If (-Not (Test-Path $Destination)) {
+            if (-Not (Test-Path $Destination)) {
                 New-Item -Path $Destination -ItemType Container | Out-Null
                 Write-Warning "$Destination did not exist and has been created as a folder path."
             }
 
             $Destination = Join-Path ((Resolve-Path -Path $Destination).Path) -ChildPath '/'
         }
-        Catch {
-            Throw $_
+        catch {
+            throw $_
         }
 
-        If ($Mirror -and ($SourcePath -is [Array])) {
-            Throw 'Cannot use -Mirror with an array of Paths. Specify a single Source path only.'
+        if ($Mirror -and ($SourcePath -is [array])) {
+            throw 'Cannot use -Mirror with an array of Paths. Specify a single Source path only.'
         }
 
     }
-    Process {
-        ForEach ($Source in $SourcePath) {
+    process {
+        foreach ($Source in $SourcePath) {
             $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File -Exclude $Exclude).FullName
 
-            ForEach ($SourceFile in $SourceFiles) {
+            foreach ($SourceFile in $SourceFiles) {
                 $DestFile = Get-DestinationFilePath -File $SourceFile -Source $Source -Destination $Destination
                 $SourceHash = (Get-FileHash $SourceFile -Algorithm $Algorithm).hash
 
-                If (Test-Path $DestFile) {
+                if (Test-Path $DestFile) {
                     $DestHash = (Get-FileHash $DestFile -Algorithm $Algorithm).hash
                 }
-                Else {
+                else {
                     #Using New-Item -Force creates an initial destination file along with any folders missing from its path.
                     #We use (Get-Date).Ticks to give the file a random value so that it is copied even if the source file is
                     #empty, so that if -PassThru has been used it is returned.
-                    If ($PSCmdlet.ShouldProcess($DestFile, 'New-Item')) {
+                    if ($PSCmdlet.ShouldProcess($DestFile, 'New-Item')) {
                         New-Item -Path $DestFile -Value (Get-Date).Ticks -Force -ItemType 'file' | Out-Null
                     }
                     $DestHash = $null
                 }
 
-                If (($SourceHash -ne $DestHash) -and $PSCmdlet.ShouldProcess($SourceFile, 'Copy-Item')) {
+                if (($SourceHash -ne $DestHash) -and $PSCmdlet.ShouldProcess($SourceFile, 'Copy-Item')) {
                     Copy-Item -Path $SourceFile -Destination $DestFile -Force:$Force -PassThru:$PassThru
                 }
             }
 
             if ($Mirror) {
                 $DestFiles = (Get-ChildItem $Destination -Recurse:$Recurse -File).FullName
-    
-                ForEach ($DestFile in $DestFiles) {
+
+                foreach ($DestFile in $DestFiles) {
                     $SourceFile = Get-DestinationFilePath -File $DestFile -Source $Destination -Destination $Source
-    
-                    If (-not (Test-Path $SourceFile)) {
-                        If ($PSCmdlet.ShouldProcess($DestFile, 'Remove-Item')) {
+
+                    if (-not (Test-Path $SourceFile)) {
+                        if ($PSCmdlet.ShouldProcess($DestFile, 'Remove-Item')) {
                             Remove-Item $DestFile
                         }
                     }

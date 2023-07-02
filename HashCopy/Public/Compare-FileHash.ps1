@@ -31,6 +31,9 @@ function Compare-FileHash {
 
             If no value is specified, or if the parameter is omitted, the default value is SHA256.
 
+        .PARAMETER Exclude
+            Exclude one or more files from being compared.
+
         .PARAMETER Recurse
             Indicates that this cmdlet performs a recursive comparison.
 
@@ -60,46 +63,49 @@ function Compare-FileHash {
         [String]
         $Algorithm = 'SHA256',
 
+        [string[]]
+        $Exclude,
+
         [switch]
         $Recurse
     )
-    Begin {
-        Try {
-            $SourcePath = If ($PSBoundParameters.ContainsKey('LiteralPath')) {
+    begin {
+        try {
+            $SourcePath = if ($PSBoundParameters.ContainsKey('LiteralPath')) {
                 (Resolve-Path -LiteralPath $LiteralPath).Path
             }
-            Else {
+            else {
                 (Resolve-Path -Path $Path).Path
             }
 
-            If (-Not (Test-Path $Destination)) {
-                Throw "$Destination does not exist"
+            if (-Not (Test-Path $Destination)) {
+                throw "$Destination does not exist"
             }
-            Else {
+            else {
                 $Destination = Join-Path ((Resolve-Path -Path $Destination).Path) -ChildPath '/'
             }
         }
-        Catch {
-            Throw $_
+        catch {
+            throw $_
         }
     }
-    Process {
-        ForEach ($Source in $SourcePath) {
-            $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File).FullName
+    process {
+        foreach ($Source in $SourcePath) {
+            $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File -Exclude $Exclude).FullName
 
-            ForEach ($SourceFile in $SourceFiles) {
+            foreach ($SourceFile in $SourceFiles) {
                 $DestFile = Get-DestinationFilePath -File $SourceFile -Source $Source -Destination $Destination
                 $SourceHash = (Get-FileHash $SourceFile -Algorithm $Algorithm).hash
 
-                If (Test-Path $DestFile) {
+                if (Test-Path $DestFile) {
                     $DestHash = (Get-FileHash $DestFile -Algorithm $Algorithm).hash
                 }
-                Else {
+                else {
                     Write-Verbose "New file: $SourceFile"
                     $DestHash = $null
                 }
 
-                If ($SourceHash -ne $DestHash) {
+                if ($SourceHash -ne $DestHash) {
                     Get-ChildItem -Path $SourceFile
                 }
             }

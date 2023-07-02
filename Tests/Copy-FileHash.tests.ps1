@@ -7,7 +7,7 @@ $Module = 'HashCopy'
 If (-not (Get-Module $Module)) { Import-Module "$Root/$Module" -Force }
 
 Describe "Copy-FileHash PS$PSVersion" {
-    
+
     $CopyParams1 = @{
         Path        = Join-Path $TestDrive '/TempSource'
         Destination = Join-Path $TestDrive '/TempDest/'
@@ -27,7 +27,7 @@ Describe "Copy-FileHash PS$PSVersion" {
     ForEach ($CopyParams in $CopyParams1, $CopyParams2, $CopyParams3) {
 
         Context "Copy-FileHash -Path $($CopyParams.Path) -Destination $($CopyParams.Destination) -Recurse:$($CopyParams.Recurse)" {
-            
+
             New-Item -ItemType Directory $CopyParams.Path
             New-Item -ItemType Directory $CopyParams.Destination
 
@@ -51,7 +51,7 @@ Describe "Copy-FileHash PS$PSVersion" {
                 New-Item -ItemType Directory (Join-Path $CopyParams.Path '/Somesubdir')
                 New-Item  (Join-Path $CopyParams.Path '/Somesubdir/someoriginalfile.txt')
                 'oldcontent' | Out-File (Join-Path $CopyParams.Destination '/someoriginalfile.txt')
-            
+
                 It 'Copy-FileHash should return null' {
                     Copy-FileHash @CopyParams | Should -Be $Null
                 }
@@ -68,7 +68,7 @@ Describe "Copy-FileHash PS$PSVersion" {
                 New-Item -ItemType Directory (Join-Path $CopyParams.Path '/Somedir/Someotherdir')
                 New-Item  (Join-Path $CopyParams.Path '/Somedir/Someotherdir/someoriginalfile.txt')
                 'oldcontent' | Out-File (Join-Path $CopyParams.Destination '/someoriginalfile.txt')
-            
+
                 It 'Copy-FileHash should return null' {
                     Copy-FileHash @CopyParams | Should -Be $Null
                 }
@@ -83,7 +83,7 @@ Describe "Copy-FileHash PS$PSVersion" {
             Context 'No file changes needed with a single file' {
                 'onecontent' | Out-File (Join-Path $CopyParams.Path '/someoriginalfile.txt')
                 'onecontent' | Out-File (Join-Path $CopyParams.Destination '/someoriginalfile.txt')
-                
+
                 It 'Copy-FileHash should return null"' {
                     Copy-FileHash @CopyParams | Should -Be $Null
                 }
@@ -97,7 +97,7 @@ Describe "Copy-FileHash PS$PSVersion" {
                 'onecontent' | Out-File (Join-Path $CopyParams.Destination '/someoriginalfile.txt')
                 'twocontent' | Out-File (Join-Path $CopyParams.Path '/someotherfile.txt')
                 'twocontent' | Out-File (Join-Path $CopyParams.Destination '/someotherfile.txt')
-                
+
                 It 'Copy-FileHash should return null"' {
                     Copy-FileHash @CopyParams | Should -Be $Null
                 }
@@ -142,7 +142,7 @@ Describe "Copy-FileHash PS$PSVersion" {
                 'newcontent' | Out-File (Join-Path $CopyParams.Path '/someoriginalfile.txt')
                 'oldcontent' | Out-File (Join-Path $CopyParams.Destination '/someoriginalfile.txt')
                 'existingfi' | Out-File (Join-Path $CopyParams.Destination '/someexistingfile.txt')
-                
+
                 It 'Copy-FileHash should return null' {
                     Copy-FileHash @CopyParams -Mirror | Should -Be $Null
                 }
@@ -157,7 +157,7 @@ Describe "Copy-FileHash PS$PSVersion" {
                 }
             }
         }
-    }    
+    }
 
     $CopyLiteralParams = @{
         LiteralPath = Join-Path $TestDrive '/LiteralTempSource'
@@ -166,15 +166,15 @@ Describe "Copy-FileHash PS$PSVersion" {
     }
 
     Context "Copy-FileHash -LiteralPath $($CopyLiteralParams.LiteralPath) -Destination $($CopyLiteralParams.Destination) -Recurse:$($CopyLiteralParams.Recurse)" {
-    
+
         New-Item -ItemType Directory $CopyLiteralParams.LiteralPath
         New-Item -ItemType Directory $CopyLiteralParams.Destination
-    
+
         Context 'New file to copy and existing file to modify' {
             New-Item (Join-Path $CopyLiteralParams.LiteralPath '/somenewfile.txt')
             'newcontent' | Out-File (Join-Path $CopyLiteralParams.LiteralPath '/someoriginalfile.txt')
             'oldcontent' | Out-File (Join-Path $CopyLiteralParams.Destination '/someoriginalfile.txt')
-    
+
             It 'Copy-FileHash should return null' {
                 Copy-FileHash @CopyLiteralParams | Should -Be $Null
             }
@@ -191,7 +191,7 @@ Describe "Copy-FileHash PS$PSVersion" {
             'newcontent' | Out-File (Join-Path $CopyLiteralParams.LiteralPath '/someoriginalfile.txt')
             'oldcontent' | Out-File (Join-Path $CopyLiteralParams.Destination '/someoriginalfile.txt')
             'existingfi' | Out-File (Join-Path $CopyLiteralParams.Destination '/someexistingfile.txt')
-            
+
             It 'Copy-FileHash should return null' {
                 Copy-FileHash @CopyLiteralParams -Mirror | Should -Be $Null
             }
@@ -241,7 +241,7 @@ Describe "Copy-FileHash PS$PSVersion" {
             Destination = Join-Path $TestDrive '/TempDest'
             Recurse     = $true
             WhatIf      = $true
-        }  
+        }
 
         New-Item -ItemType Directory $CopyWhatIfParams.Path
         New-Item -ItemType Directory $CopyWhatIfParams.Destination

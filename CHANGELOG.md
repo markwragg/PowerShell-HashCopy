@@ -1,5 +1,9 @@
 # Change Log
 
+## !Deploy
+
+* [Feature] `Compare-FileHash` now has the same `-Exclude` parameter that was added to `Copy-FileHash` for excluding one or more files from the comparison.
+
 ## [1.0.56] - 2023-06-28
 
 * [Feature] `Copy-FileHash` now has an `-Exclude` parameter that can be used to exclude one or more files from being copied. Thanks [@shayki5](https://github.com/shayki5)!
