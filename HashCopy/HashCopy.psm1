@@ -9,3 +9,5 @@ $Private = @( Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" -Recurse )
         Write-Error -Message "Failed to import function $($_.FullName): $_"
     }
 }
+
+Export-ModuleMember -Function $Public.BaseName
