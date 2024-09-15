@@ -1,83 +1,88 @@
-# Vars
-$changelogPath = Join-Path -Path $env:BHProjectPath -Child 'CHANGELOG.md'
+BeforeAll {
+    $env:BHProjectPath = Join-Path $PSScriptRoot "../../"
+    $env:BHProjectName = (Get-ChildItem $env:BHProjectPath -Filter '*.psm1' -Recurse).BaseName
+    $env:BHPSModuleManifest = (Get-ChildItem $env:BHProjectPath -Filter "${env:BHProjectName}.psd1" -Recurse).FullName
+    
+    $moduleName = $env:BHProjectName
+    $manifest = Import-PowerShellDataFile -Path $env:BHPSModuleManifest
+    $outputManifestPath = Join-Path -Path (Join-Path $env:BHProjectPath $env:BHProjectName) "$($moduleName).psd1"
+    $manifestData = Test-ModuleManifest -Path $outputManifestPath -Verbose:$false -ErrorAction Stop -WarningAction SilentlyContinue
+
+    $changelogPath = Join-Path -Path $env:BHProjectPath -Child 'CHANGELOG.md'
+    $changelogVersion = Get-Content $changelogPath | ForEach-Object {
+        if ($_ -match "^##\s\[(?<Version>(\d+\.){1,3}\d+)\]") {
+            $changelogVersion = $matches.Version
+            break
+        }
+    }
+
+    $script:manifest = $null
+}
 
 Describe 'Module manifest' {
+
     Context 'Validation' {
 
-        $script:manifest = $null
-
         It 'Has a valid manifest' {
-            {
-                $script:manifest = Test-ModuleManifest -Path $env:BHPSModuleManifest -Verbose:$false -ErrorAction 'Stop' -WarningAction 'SilentlyContinue'
-            } | Should Not Throw
+            $manifestData | Should -Not -BeNullOrEmpty
         }
 
         It 'Has a valid name in the manifest' {
-            $script:manifest.Name | Should Be $env:BHProjectName
+            $manifestData.Name | Should -Be $moduleName
         }
 
         It 'Has a valid root module' {
-            $script:manifest.RootModule | Should Be "$($env:BHProjectName).psm1"
+            $manifestData.RootModule | Should -Be "$($moduleName).psm1"
         }
 
         It 'Has a valid version in the manifest' {
-            $script:manifest.Version -as [Version] | Should Not BeNullOrEmpty
+            $manifestData.Version -as [Version] | Should -Not -BeNullOrEmpty
         }
 
         It 'Has a valid description' {
-            $script:manifest.Description | Should Not BeNullOrEmpty
+            $manifestData.Description | Should -Not -BeNullOrEmpty
         }
 
         It 'Has a valid author' {
-            $script:manifest.Author | Should Not BeNullOrEmpty
+            $manifestData.Author | Should -Not -BeNullOrEmpty
         }
 
         It 'Has a valid guid' {
-            {
-                [guid]::Parse($script:manifest.Guid)
-            } | Should Not throw
+            { [guid]::Parse($manifestData.Guid) } | Should -Not -Throw
         }
 
         It 'Has a valid copyright' {
-            $script:manifest.CopyRight | Should Not BeNullOrEmpty
+            $manifestData.CopyRight | Should -Not -BeNullOrEmpty
         }
 
-        # Only for DSC modules
-        # It 'exports DSC resources' {
-        #     $dscResources = ($Manifest.psobject.Properties | Where Name -eq 'ExportedDscResources').Value
-        #     @($dscResources).Count | Should Not Be 0
-        # }
-
-        $script:changelogVersion = $null
-        It 'Has a valid version in the changelog' -Skip {
-            foreach ($line in (Get-Content $changelogPath)) {
-                if ($line -match "^##\s\[(?<Version>(\d+\.){1,3}\d+)\]") {
-                    $script:changelogVersion = $matches.Version
-                    break
-                }
-            }
-            $script:changelogVersion               | Should Not BeNullOrEmpty
-            $script:changelogVersion -as [Version] | Should Not BeNullOrEmpty
+        It 'Has a valid version in the changelog' {
+            $changelogVersion               | Should -Not -BeNullOrEmpty
+            $changelogVersion -as [Version] | Should -Not -BeNullOrEmpty
         }
 
-        It 'Has matching changelog and manifest versions' -Skip {
-            $script:changelogVersion -as [Version] | Should be ( $script:manifest.Version -as [Version] )
+        It 'Changelog and manifest versions are the same' {
+            $changelogVersion -as [Version] | Should -Be ( $manifestData.Version -as [Version] )
         }
+    }
+}
 
-        if (Get-Command -Name 'git.exe' -ErrorAction 'SilentlyContinue') {
-            $script:tagVersion = $null
+Describe 'Git tagging' -Skip {
+    
+    BeforeAll {
+        $gitTagVersion = $null
 
-            # Skipped as we tag as part of CI build
-            It 'Is tagged with a valid version' -skip {
-                $thisCommit = git.exe log --decorate --oneline HEAD~1..HEAD
-
-                if ($thisCommit -match 'tag:\s*(\d+(?:\.\d+)*)') {
-                    $script:tagVersion = $matches[1]
-                }
-
-                $script:tagVersion               | Should Not BeNullOrEmpty
-                $script:tagVersion -as [Version] | Should Not BeNullOrEmpty
-            }
+        if ($git = Get-Command git -CommandType Application -ErrorAction SilentlyContinue) {
+            $thisCommit = & $git log --decorate --oneline HEAD~1..HEAD
+            if ($thisCommit -match 'tag:\s*(\d+(?:\.\d+)*)') { $gitTagVersion = $matches[1] }
         }
+    }
+
+    It 'Is tagged with a valid version' {
+        $gitTagVersion               | Should -Not -BeNullOrEmpty
+        $gitTagVersion -as [Version] | Should -Not -BeNullOrEmpty
+    }
+
+    It 'Matches manifest version' {
+        $manifestData.Version -as [Version] | Should -Be ( $gitTagVersion -as [Version])
     }
 }
