@@ -1,12 +1,11 @@
-if (-not $PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
-
 $PSVersion = $PSVersionTable.PSVersion.Major
-$Root = "$PSScriptRoot/../"
-$Module = 'HashCopy'
-
-If (-not (Get-Module $Module)) { Import-Module "$Root/$Module" -Force }
 
 Describe "Copy-FileHash PS$PSVersion" {
+
+    BeforeAll {
+        . $PSScriptRoot/../HashCopy/Public/Copy-FileHash.ps1
+        . $PSScriptRoot/../HashCopy/Private/Get-DestinationFilePath.ps1
+    }
 
     $CopyParams1 = @{
         Path        = '/TempSource'
