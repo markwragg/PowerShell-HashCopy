@@ -6,7 +6,7 @@ Describe 'Testing against PSSA rules' {
 
         BeforeAll {
             $env:BHProjectPath = Resolve-Path (Join-Path $PSScriptRoot "../../")
-            $env:BHModulePath = (Get-ChildItem $env:BHProjectPath -Filter '*.psm1' -Recurse | Where-Object { $_.Name -notmatch 'staging'}).Directory
+            $env:BHModulePath = (Get-ChildItem $env:BHProjectPath -Filter '*.psm1' -Recurse | Where-Object { $_.Fullname -notmatch 'staging'}).Directory
 
             $ScriptAnalyzerSettingsPath = Join-Path -Path $env:BHProjectPath -ChildPath 'PSScriptAnalyzerSettings.psd1'
             $analysis = Invoke-ScriptAnalyzer -Path $env:BHModulePath -Recurse -Settings $ScriptAnalyzerSettingsPath
