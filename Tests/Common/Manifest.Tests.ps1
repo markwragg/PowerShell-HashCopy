@@ -1,5 +1,5 @@
 BeforeAll {
-    $env:BHProjectPath = Join-Path $PSScriptRoot "../../"
+    $env:BHProjectPath = Resolve-Path (Join-Path $PSScriptRoot "../../")
     $env:BHProjectName = (Get-ChildItem $env:BHProjectPath -Filter '*.psm1' -Recurse).BaseName
     $env:BHPSModuleManifest = (Get-ChildItem $env:BHProjectPath -Filter "${env:BHProjectName}.psd1" -Recurse).FullName
     
