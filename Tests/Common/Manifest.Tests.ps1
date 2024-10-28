@@ -1,8 +1,8 @@
 BeforeAll {
     $env:BHProjectPath = Resolve-Path (Join-Path $PSScriptRoot "../../")
-    $env:BHProjectName = (Get-ChildItem $env:BHProjectPath -Filter '*.psm1' -Recurse | Where-Object { $_.Fullname -notmatch 'staging'}).BaseName
+    $env:BHProjectName = (Get-ChildItem $env:BHProjectPath -Filter '*.psm1' -Recurse | Select-Object -First 1).BaseName
     $env:BHPSModuleManifest = (Get-ChildItem $env:BHProjectPath -Filter "${env:BHProjectName}.psd1" -Recurse).FullName
-    
+
     $moduleName = $env:BHProjectName
     $manifest = Import-PowerShellDataFile -Path $env:BHPSModuleManifest
     $outputManifestPath = Join-Path -Path (Join-Path $env:BHProjectPath $env:BHProjectName) "$($moduleName).psd1"
@@ -67,7 +67,7 @@ Describe 'Module manifest' {
 }
 
 Describe 'Git tagging' -Skip {
-    
+
     BeforeAll {
         $gitTagVersion = $null
 
