@@ -1,7 +1,7 @@
 BeforeAll {
     $env:BHProjectPath = Resolve-Path (Join-Path $PSScriptRoot "../../")
     $env:BHProjectName = (Get-ChildItem $env:BHProjectPath -Filter '*.psm1' -Recurse | Select-Object -First 1).BaseName
-    $env:BHPSModuleManifest = (Get-ChildItem $env:BHProjectPath -Filter "${env:BHProjectName}.psd1" -Recurse).FullName
+    $env:BHPSModuleManifest = (Get-ChildItem $env:BHProjectPath -Filter "${env:BHProjectName}.psd1").FullName
 
     $moduleName = $env:BHProjectName
     $manifest = Import-PowerShellDataFile -Path $env:BHPSModuleManifest
