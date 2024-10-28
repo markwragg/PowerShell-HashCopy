@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE report PUBLIC "-//JACOCO//DTD Report 1.1//EN" "report.dtd"[]>
+<report name="Pester (10/28/2024 16:18:02)">
+  <sessioninfo id="this" start="1730132277879" dump="1730132282402" />
+  <package name="HashCopy/Private">
+    <class name="HashCopy/Private/Get-DestinationFilePath" sourcefilename="Private/Get-DestinationFilePath.ps1">
+      <method name="Get-DestinationFilePath" desc="()" line="33">
+        <counter type="INSTRUCTION" missed="2" covered="9" />
+        <counter type="LINE" missed="1" covered="5" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="2" covered="9" />
+      <counter type="LINE" missed="1" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <sourcefile name="Private/Get-DestinationFilePath.ps1">
+      <line nr="33" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="34" mi="2" ci="0" mb="0" cb="0" />
+      <line nr="37" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="38" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="39" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="41" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="2" covered="9" />
+      <counter type="LINE" missed="1" covered="5" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <counter type="INSTRUCTION" missed="2" covered="9" />
+    <counter type="LINE" missed="1" covered="5" />
+    <counter type="METHOD" missed="0" covered="1" />
+    <counter type="CLASS" missed="0" covered="1" />
+  </package>
+  <package name="HashCopy/Public">
+    <class name="HashCopy/Public/Compare-FileHash" sourcefilename="Public/Compare-FileHash.ps1">
+      <method name="Compare-FileHash" desc="()" line="48">
+        <counter type="INSTRUCTION" missed="2" covered="33" />
+        <counter type="LINE" missed="2" covered="19" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="2" covered="33" />
+      <counter type="LINE" missed="2" covered="19" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <class name="HashCopy/Public/Copy-FileHash" sourcefilename="Public/Copy-FileHash.ps1">
+      <method name="Copy-FileHash" desc="()" line="59">
+        <counter type="INSTRUCTION" missed="4" covered="49" />
+        <counter type="LINE" missed="3" covered="29" />
+        <counter type="METHOD" missed="0" covered="1" />
+      </method>
+      <counter type="INSTRUCTION" missed="4" covered="49" />
+      <counter type="LINE" missed="3" covered="29" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </class>
+    <sourcefile name="Public/Compare-FileHash.ps1">
+      <line nr="48" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="53" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="58" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="74" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="75" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="78" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="81" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="82" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="85" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="89" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="93" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="94" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="96" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="97" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="98" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="100" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="101" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="104" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="105" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="108" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="109" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="2" covered="33" />
+      <counter type="LINE" missed="2" covered="19" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <sourcefile name="Public/Copy-FileHash.ps1">
+      <line nr="59" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="64" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="69" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="94" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="95" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="98" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="101" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="102" mi="2" ci="0" mb="0" cb="0" />
+      <line nr="103" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="106" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="109" mi="1" ci="0" mb="0" cb="0" />
+      <line nr="112" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="113" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="118" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="119" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="121" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="122" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="123" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="125" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="126" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="132" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="133" mi="0" ci="3" mb="0" cb="0" />
+      <line nr="135" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="138" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="139" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="143" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="144" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="146" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="147" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="149" mi="0" ci="2" mb="0" cb="0" />
+      <line nr="150" mi="0" ci="1" mb="0" cb="0" />
+      <line nr="151" mi="0" ci="1" mb="0" cb="0" />
+      <counter type="INSTRUCTION" missed="4" covered="49" />
+      <counter type="LINE" missed="3" covered="29" />
+      <counter type="METHOD" missed="0" covered="1" />
+      <counter type="CLASS" missed="0" covered="1" />
+    </sourcefile>
+    <counter type="INSTRUCTION" missed="6" covered="82" />
+    <counter type="LINE" missed="5" covered="48" />
+    <counter type="METHOD" missed="0" covered="2" />
+    <counter type="CLASS" missed="0" covered="2" />
+  </package>
+  <counter type="INSTRUCTION" missed="8" covered="91" />
+  <counter type="LINE" missed="6" covered="53" />
+  <counter type="METHOD" missed="0" covered="3" />
+  <counter type="CLASS" missed="0" covered="3" />
+</report>

@@ -162,7 +162,7 @@ Task 'Test' -Depends 'ImportStagingModule' {
     }
 
     #Update readme.md with Code Coverage result
-    $CoveragePercent = [math]::floor(100 - (($TestResults.CodeCoverage.NumberOfCommandsMissed / $TestResults.CodeCoverage.NumberOfCommandsAnalyzed) * 100))
+    $CoveragePercent = [int]$TestResults.CodeCoverage.CoveragePercent
 
     Set-ShieldsIoBadge -Path (Join-Path $ProjectRoot 'README.md') -Subject 'coverage' -Status $CoveragePercent -AsPercentage
 }
@@ -239,7 +239,7 @@ Task 'Deploy' -Depends 'Init' {
     }
 
     if (Get-Item "$ProjectRoot/CHANGELOG.md") {
-        
+
         $ChangeLog = Get-Content "$ProjectRoot/CHANGELOG.md"
 
         if ($ChangeLog -contains '## !Deploy') {
