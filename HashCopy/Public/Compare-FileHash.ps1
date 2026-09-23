@@ -98,10 +98,11 @@ function Compare-FileHash {
         }
 
         foreach ($Source in $SourcePath) {
-            #-LiteralPath (rather than -Path) is used here so that -Exclude filters correctly even
-            #without -Recurse; Get-ChildItem's -Exclude only works reliably against -Path when the
-            #path contains a wildcard or -Recurse is specified.
-            $SourceFiles = (Get-ChildItem -LiteralPath $Source -Recurse:$Recurse -File -Exclude $Exclude).FullName
+            #Get-ChildItem's own -Exclude is filtered manually here rather than passed through, since combined
+            #with -LiteralPath it silently fails to filter anything on Windows PowerShell 5.1 (though it works
+            #correctly on PowerShell 7+) when -Recurse is not also specified.
+            $SourceFiles = (Get-ChildItem -LiteralPath $Source -Recurse:$Recurse -File |
+                    Where-Object { -not (Test-ExcludeMatch -Name $_.Name -Exclude $Exclude) }).FullName
 
             foreach ($SourceFile in $SourceFiles) {
                 $DestFile = Get-DestinationFilePath -File $SourceFile -Source $Source -Destination $Destination

@@ -124,7 +124,11 @@ function Copy-FileHash {
         }
 
         foreach ($Source in $SourcePath) {
-            $SourceFiles = (Get-ChildItem -LiteralPath $Source -Recurse:$Recurse -File -Exclude $Exclude).FullName
+            #Get-ChildItem's own -Exclude is filtered manually here rather than passed through, since combined
+            #with -LiteralPath it silently fails to filter anything on Windows PowerShell 5.1 (though it works
+            #correctly on PowerShell 7+) when -Recurse is not also specified.
+            $SourceFiles = (Get-ChildItem -LiteralPath $Source -Recurse:$Recurse -File |
+                    Where-Object { -not (Test-ExcludeMatch -Name $_.Name -Exclude $Exclude) }).FullName
 
             foreach ($SourceFile in $SourceFiles) {
                 $DestFile = Get-DestinationFilePath -File $SourceFile -Source $Source -Destination $Destination

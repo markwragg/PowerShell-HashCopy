@@ -5,6 +5,7 @@ Describe "Copy-FileHash PS$PSVersion" {
     BeforeAll {
         . $PSScriptRoot/../HashCopy/Public/Copy-FileHash.ps1
         . $PSScriptRoot/../HashCopy/Private/Get-DestinationFilePath.ps1
+        . $PSScriptRoot/../HashCopy/Private/Test-ExcludeMatch.ps1
     }
 
     $CopyParams1 = @{

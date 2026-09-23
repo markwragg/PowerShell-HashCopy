@@ -182,10 +182,23 @@ Task 'Test' -Depends 'ImportStagingModule' {
         Write-Error "Failed '$($TestResults.FailedCount)' tests, build failed"
     }
 
-    #Update readme.md with Code Coverage result
+    # Surface the coverage result as a pipeline output variable so a later stage (which runs in a
+    # separate, discarded workspace) can apply it to README.md without re-running the tests.
     $CoveragePercent = [math]::floor($TestResults.CodeCoverage.CoveragePercent)
 
-    Set-ShieldsIoBadge -Path (Join-Path $ProjectRoot 'README.md') -Subject 'coverage' -Status $CoveragePercent -AsPercentage
+    Write-Host "##vso[task.setvariable variable=CoveragePercent;isOutput=true]$CoveragePercent"
+}
+
+
+# Update the coverage badge in README.md using a coverage percentage computed by an earlier Test task
+Task 'UpdateCoverageBadge' -Depends 'Init' {
+    $lines
+
+    if (-not $env:CoveragePercent) {
+        throw "CoveragePercent environment variable not set. Run the 'Test' task first and pass its coverage output through."
+    }
+
+    Set-ShieldsIoBadge -Path (Join-Path $ProjectRoot 'README.md') -Subject 'coverage' -Status $env:CoveragePercent -AsPercentage
 }
 
 
