@@ -88,6 +88,7 @@ stages:
             displayName: "Publish Pester Tests"
             inputs:
               testRunner: "NUnit"
+              testResultsFiles: "**/Test-Unit_*.xml"
               searchFolder: "Artifacts"
               testRunTitle: "PesterTests-Windows"
             condition: always()
@@ -140,6 +141,7 @@ stages:
             displayName: "Publish Pester Tests"
             inputs:
               testRunner: "NUnit"
+              testResultsFiles: "**/Test-Unit_*.xml"
               searchFolder: "Artifacts"
               testRunTitle: "PesterTests-$(Agent.OS)"
             condition: always()
