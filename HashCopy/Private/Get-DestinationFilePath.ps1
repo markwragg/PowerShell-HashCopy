@@ -30,12 +30,16 @@ function Get-DestinationFilePath {
         $Destination
     )
 
-    if (Test-Path -Path $Source -PathType leaf) {
+    #Source and File are already-resolved, concrete paths (not user-typed wildcard patterns), so
+    #-LiteralPath is used throughout to avoid characters like [ ] being misinterpreted as wildcards.
+    if (Test-Path -LiteralPath $Source -PathType leaf) {
         $Source = Join-Path (Split-Path -Parent $Source) -ChildPath '/'
     }
 
+    $ResolvedSource = Convert-Path -LiteralPath $Source
+
     $DestFile = Join-Path (Split-Path -Parent $File) -ChildPath '/'
-    $DestFile = $DestFile -Replace "^$([Regex]::Escape((Convert-Path $Source)))", $Destination
+    $DestFile = $DestFile -Replace "^$([Regex]::Escape($ResolvedSource))", $Destination
     $DestFile = Join-Path -Path $DestFile -ChildPath (Split-Path -Leaf $File)
 
     Return $DestFile

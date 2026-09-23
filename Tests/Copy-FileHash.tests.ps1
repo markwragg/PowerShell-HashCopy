@@ -285,7 +285,7 @@ Describe "Copy-FileHash PS$PSVersion" {
             New-Item -ItemType Directory $CopyWhatIfParams.Path
             New-Item -ItemType Directory $CopyWhatIfParams.Destination
 
-            New-Item (Join-Path $CopyWhatIfParams.Path '/somenewfile.txt') 
+            New-Item (Join-Path $CopyWhatIfParams.Path '/somenewfile.txt')
         }
 
         It 'Should not throw when using -WhatIf and a destination file does not exist' {

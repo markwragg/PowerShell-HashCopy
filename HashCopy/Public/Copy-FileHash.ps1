@@ -56,17 +56,17 @@ function Copy-FileHash {
     [cmdletbinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName, ParameterSetName = 'Path')]
-        [ValidateScript( {if (Test-Path $_) {$True} Else { Throw '-Path must be a valid path.'} })]
+        [ValidateScript( { if (Test-Path -Path $_) { $True } Else { Throw '-Path must be a valid path.' } })]
         [string[]]
         $Path,
 
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName = 'LiteralPath')]
-        [ValidateScript( {if (Test-Path $_) {$True} Else { Throw '-LiteralPath must be a valid path.'} })]
+        [ValidateScript( { if (Test-Path -LiteralPath $_) { $True } Else { Throw '-LiteralPath must be a valid path.' } })]
         [string[]]
         $LiteralPath,
 
         [Parameter(Mandatory)]
-        [ValidateScript( {if (Test-Path $_ -PathType Container -IsValid) {$True} Else { Throw '-Destination must be a valid path.' } })]
+        [ValidateScript( { if (Test-Path -Path $_ -PathType Container -IsValid) { $True } Else { Throw '-Destination must be a valid path.' } })]
         [string]
         $Destination,
 
@@ -98,12 +98,14 @@ function Copy-FileHash {
                 (Resolve-Path -Path $Path).Path
             }
 
-            if (-Not (Test-Path $Destination)) {
+            #Everything below operates on already-resolved, concrete paths, so -LiteralPath is used
+            #throughout to prevent characters such as [ ] in those paths being misread as wildcards.
+            if (-Not (Test-Path -LiteralPath $Destination)) {
                 New-Item -Path $Destination -ItemType Container | Out-Null
                 Write-Warning "$Destination did not exist and has been created as a folder path."
             }
 
-            $Destination = Join-Path ((Resolve-Path -Path $Destination).Path) -ChildPath '/'
+            $Destination = Join-Path ((Resolve-Path -LiteralPath $Destination).Path) -ChildPath '/'
         }
         catch {
             throw $_
@@ -112,18 +114,17 @@ function Copy-FileHash {
         if ($Mirror -and ($SourcePath -is [array])) {
             throw 'Cannot use -Mirror with an array of Paths. Specify a single Source path only.'
         }
-
     }
     process {
         foreach ($Source in $SourcePath) {
-            $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File -Exclude $Exclude).FullName
+            $SourceFiles = (Get-ChildItem -LiteralPath $Source -Recurse:$Recurse -File -Exclude $Exclude).FullName
 
             foreach ($SourceFile in $SourceFiles) {
                 $DestFile = Get-DestinationFilePath -File $SourceFile -Source $Source -Destination $Destination
-                $SourceHash = (Get-FileHash $SourceFile -Algorithm $Algorithm).hash
+                $SourceHash = (Get-FileHash -LiteralPath $SourceFile -Algorithm $Algorithm).hash
 
-                if (Test-Path $DestFile) {
-                    $DestHash = (Get-FileHash $DestFile -Algorithm $Algorithm).hash
+                if (Test-Path -LiteralPath $DestFile) {
+                    $DestHash = (Get-FileHash -LiteralPath $DestFile -Algorithm $Algorithm).hash
                 }
                 else {
                     #Using New-Item -Force creates an initial destination file along with any folders missing from its path.
@@ -136,19 +137,19 @@ function Copy-FileHash {
                 }
 
                 if (($SourceHash -ne $DestHash) -and $PSCmdlet.ShouldProcess($SourceFile, 'Copy-Item')) {
-                    Copy-Item -Path $SourceFile -Destination $DestFile -Force:$Force -PassThru:$PassThru
+                    Copy-Item -LiteralPath $SourceFile -Destination $DestFile -Force:$Force -PassThru:$PassThru
                 }
             }
 
             if ($Mirror) {
-                $DestFiles = (Get-ChildItem $Destination -Recurse:$Recurse -File).FullName
+                $DestFiles = (Get-ChildItem -LiteralPath $Destination -Recurse:$Recurse -File).FullName
 
                 foreach ($DestFile in $DestFiles) {
                     $SourceFile = Get-DestinationFilePath -File $DestFile -Source $Destination -Destination $Source
 
-                    if (-not (Test-Path $SourceFile)) {
+                    if (-not (Test-Path -LiteralPath $SourceFile)) {
                         if ($PSCmdlet.ShouldProcess($DestFile, 'Remove-Item')) {
-                            Remove-Item $DestFile
+                            Remove-Item -LiteralPath $DestFile
                         }
                     }
                 }
