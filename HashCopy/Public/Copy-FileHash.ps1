@@ -91,13 +91,6 @@ function Copy-FileHash {
     )
     begin {
         try {
-            $SourcePath = if ($PSBoundParameters.ContainsKey('LiteralPath')) {
-                (Resolve-Path -LiteralPath $LiteralPath).Path
-            }
-            else {
-                (Resolve-Path -Path $Path).Path
-            }
-
             #Everything below operates on already-resolved, concrete paths, so -LiteralPath is used
             #throughout to prevent characters such as [ ] in those paths being misread as wildcards.
             if (-Not (Test-Path -LiteralPath $Destination)) {
@@ -110,12 +103,26 @@ function Copy-FileHash {
         catch {
             throw $_
         }
+    }
+    process {
+        #Path/LiteralPath are resolved here rather than in begin, since Mandatory pipeline-bound
+        #parameters are not yet populated when begin runs.
+        try {
+            $SourcePath = if ($PSBoundParameters.ContainsKey('LiteralPath')) {
+                (Resolve-Path -LiteralPath $LiteralPath).Path
+            }
+            else {
+                (Resolve-Path -Path $Path).Path
+            }
+        }
+        catch {
+            throw $_
+        }
 
         if ($Mirror -and ($SourcePath -is [array])) {
             throw 'Cannot use -Mirror with an array of Paths. Specify a single Source path only.'
         }
-    }
-    process {
+
         foreach ($Source in $SourcePath) {
             $SourceFiles = (Get-ChildItem -LiteralPath $Source -Recurse:$Recurse -File -Exclude $Exclude).FullName
 

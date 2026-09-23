@@ -272,6 +272,101 @@ Describe "Copy-FileHash PS$PSVersion" {
         }
     }
 
+    Context 'Copy-FileHash with a -Destination that does not yet exist' {
+
+        BeforeAll {
+            $Path = Join-Path $TestDrive '/NewDestSource'
+            $Destination = Join-Path $TestDrive '/NewDestDest'
+
+            New-Item -ItemType Directory $Path
+            New-Item (Join-Path $Path '/somefile.txt') -Value 'content'
+        }
+
+        It 'Should warn that the destination did not exist and has been created' {
+            Copy-FileHash -Path $Path -Destination $Destination -WarningVariable Warnings -WarningAction SilentlyContinue
+            $Warnings | Should -Match 'did not exist and has been created as a folder path'
+        }
+        It 'Should create the destination folder' {
+            $Destination | Should -Exist
+        }
+        It 'Should copy somefile.txt to the newly created destination' {
+            (Join-Path $Destination '/somefile.txt') | Should -Exist
+        }
+    }
+
+    Context 'Copy-FileHash -PassThru' {
+
+        BeforeAll {
+            $Path = Join-Path $TestDrive '/PassThruSource'
+            $Destination = Join-Path $TestDrive '/PassThruDest'
+
+            New-Item -ItemType Directory $Path
+            New-Item -ItemType Directory $Destination
+            New-Item (Join-Path $Path '/somefile.txt') -Value 'content'
+        }
+
+        It 'Should return the copied file when -PassThru is used' {
+            $Result = Copy-FileHash -Path $Path -Destination $Destination -PassThru
+            $Result.Name | Should -Be 'somefile.txt'
+        }
+    }
+
+    Context 'Copy-FileHash -Exclude' {
+
+        BeforeAll {
+            $Path = Join-Path $TestDrive '/ExcludeSource'
+            $Destination = Join-Path $TestDrive '/ExcludeDest'
+
+            New-Item -ItemType Directory $Path
+            New-Item -ItemType Directory $Destination
+            New-Item (Join-Path $Path '/keepme.txt') -Value 'content'
+            New-Item (Join-Path $Path '/excludeme.txt') -Value 'content'
+
+            Copy-FileHash -Path $Path -Destination $Destination -Exclude 'excludeme.txt'
+        }
+
+        It 'Should copy the non-excluded file' {
+            (Join-Path $Destination '/keepme.txt') | Should -Exist
+        }
+        It 'Should not copy the excluded file' {
+            (Join-Path $Destination '/excludeme.txt') | Should -Not -Exist
+        }
+    }
+
+    Context 'Copy-FileHash -Algorithm' {
+
+        BeforeAll {
+            $Path = Join-Path $TestDrive '/AlgorithmSource'
+            $Destination = Join-Path $TestDrive '/AlgorithmDest'
+
+            New-Item -ItemType Directory $Path
+            New-Item -ItemType Directory $Destination
+            'content' | Out-File (Join-Path $Path '/somefile.txt')
+        }
+
+        It 'Should copy files when using a non-default -Algorithm' {
+            Copy-FileHash -Path $Path -Destination $Destination -Algorithm SHA512
+            (Join-Path $Destination '/somefile.txt') | Should -Exist
+        }
+    }
+
+    Context 'Copy-FileHash accepts -Path via the pipeline' {
+
+        BeforeAll {
+            $Path = Join-Path $TestDrive '/PipelineSource'
+            $Destination = Join-Path $TestDrive '/PipelineDest'
+
+            New-Item -ItemType Directory $Path
+            New-Item -ItemType Directory $Destination
+            New-Item (Join-Path $Path '/somefile.txt') -Value 'content'
+        }
+
+        It 'Should copy the file when -Path is supplied via the pipeline' {
+            $Path | Copy-FileHash -Destination $Destination
+            (Join-Path $Destination '/somefile.txt') | Should -Exist
+        }
+    }
+
     Context 'Copy-FileHash -WhatIf' {
 
         BeforeAll {

@@ -71,13 +71,6 @@ function Compare-FileHash {
     )
     begin {
         try {
-            $SourcePath = if ($PSBoundParameters.ContainsKey('LiteralPath')) {
-                (Resolve-Path -LiteralPath $LiteralPath).Path
-            }
-            else {
-                (Resolve-Path -Path $Path).Path
-            }
-
             if (-Not (Test-Path $Destination)) {
                 throw "$Destination does not exist"
             }
@@ -90,8 +83,25 @@ function Compare-FileHash {
         }
     }
     process {
+        #Path/LiteralPath are resolved here rather than in begin, since Mandatory pipeline-bound
+        #parameters are not yet populated when begin runs.
+        try {
+            $SourcePath = if ($PSBoundParameters.ContainsKey('LiteralPath')) {
+                (Resolve-Path -LiteralPath $LiteralPath).Path
+            }
+            else {
+                (Resolve-Path -Path $Path).Path
+            }
+        }
+        catch {
+            throw $_
+        }
+
         foreach ($Source in $SourcePath) {
-            $SourceFiles = (Get-ChildItem -Path $Source -Recurse:$Recurse -File -Exclude $Exclude).FullName
+            #-LiteralPath (rather than -Path) is used here so that -Exclude filters correctly even
+            #without -Recurse; Get-ChildItem's -Exclude only works reliably against -Path when the
+            #path contains a wildcard or -Recurse is specified.
+            $SourceFiles = (Get-ChildItem -LiteralPath $Source -Recurse:$Recurse -File -Exclude $Exclude).FullName
 
             foreach ($SourceFile in $SourceFiles) {
                 $DestFile = Get-DestinationFilePath -File $SourceFile -Source $Source -Destination $Destination

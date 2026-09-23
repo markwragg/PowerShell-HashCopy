@@ -12,7 +12,7 @@
 RootModule = 'HashCopy.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.57'
+ModuleVersion = '1.1.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -107,7 +107,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/markwragg/Powershell-HashCopy/blob/master/README.md'
+        ReleaseNotes = 'https://github.com/markwragg/Powershell-HashCopy/blob/master/CHANGELOG.md'
 
         # Prerelease string of this module
         # Prerelease = ''

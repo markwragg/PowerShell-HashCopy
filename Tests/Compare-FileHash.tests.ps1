@@ -223,4 +223,69 @@ Describe "Compare-FileHash PS$PSVersion" {
             { Compare-FileHash -Path 'TestDrive:/' -Destination 'z:|invalid<path' } | Should -Throw "Cannot validate argument on parameter 'Destination'. -Destination must be a valid path."
         }
     }
+
+    Context 'Compare-FileHash with a -Destination that does not exist' {
+
+        BeforeAll {
+            $Path = Join-Path $TestDrive '/NewDestSource'
+            $Destination = Join-Path $TestDrive '/NewDestDest'
+
+            New-Item -ItemType Directory $Path
+        }
+
+        It 'Compare-FileHash should throw stating the destination does not exist' {
+            { Compare-FileHash -Path $Path -Destination $Destination } | Should -Throw "$Destination does not exist"
+        }
+    }
+
+    Context 'Compare-FileHash -Exclude' {
+
+        BeforeAll {
+            $Path = Join-Path $TestDrive '/ExcludeSource'
+            $Destination = Join-Path $TestDrive '/ExcludeDest'
+
+            New-Item -ItemType Directory $Path
+            New-Item -ItemType Directory $Destination
+            New-Item (Join-Path $Path '/keepme.txt')
+            New-Item (Join-Path $Path '/excludeme.txt')
+        }
+
+        It 'Should return only the non-excluded file' {
+            Compare-FileHash -Path $Path -Destination $Destination -Exclude 'excludeme.txt' |
+                Should -Be (Join-Path $Path '/keepme.txt')
+        }
+    }
+
+    Context 'Compare-FileHash -Algorithm' {
+
+        BeforeAll {
+            $Path = Join-Path $TestDrive '/AlgorithmSource'
+            $Destination = Join-Path $TestDrive '/AlgorithmDest'
+
+            New-Item -ItemType Directory $Path
+            New-Item -ItemType Directory $Destination
+            'content' | Out-File (Join-Path $Path '/somefile.txt')
+        }
+
+        It 'Should return the file when using a non-default -Algorithm' {
+            Compare-FileHash -Path $Path -Destination $Destination -Algorithm SHA512 |
+                Should -Be (Join-Path $Path '/somefile.txt')
+        }
+    }
+
+    Context 'Compare-FileHash accepts -Path via the pipeline' {
+
+        BeforeAll {
+            $Path = Join-Path $TestDrive '/PipelineSource'
+            $Destination = Join-Path $TestDrive '/PipelineDest'
+
+            New-Item -ItemType Directory $Path
+            New-Item -ItemType Directory $Destination
+            New-Item (Join-Path $Path '/somefile.txt')
+        }
+
+        It 'Should return the file when -Path is supplied via the pipeline' {
+            $Path | Compare-FileHash -Destination $Destination | Should -Be (Join-Path $Path '/somefile.txt')
+        }
+    }
 }

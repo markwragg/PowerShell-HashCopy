@@ -1,0 +1,8 @@
+# Transient clone of the GitHub wiki repo, created by the UpdateWiki build task
+/wiki/
+
+# Code Coverage test output
+coverage.xml
+
+# Transient staging area for the module, created by the Test build task
+/Staging
