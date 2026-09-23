@@ -1,6 +1,6 @@
 # Change Log
 
-## !Deploy
+## [1.1.0] - 2026-09-23
 
 * [Fix] `Copy-FileHash` and `Compare-FileHash` now use `-LiteralPath` throughout when resolving and copying files, so paths containing characters such as `[` and `]` are no longer misinterpreted as wildcards ([#12](https://github.com/markwragg/PowerShell-HashCopy/issues/12)).
 * [Fix] `Copy-FileHash` and `Compare-FileHash` now resolve their `-Path`/`-LiteralPath` parameter in the `process` block instead of `begin`, fixing an issue where pipeline-bound input was not yet available when the source path was resolved.

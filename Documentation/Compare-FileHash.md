@@ -8,13 +8,13 @@ Compares files from one location to another based on determining change via comp
 ### Path
 ```
 Compare-FileHash -Path <String[]> -Destination <String> [-Algorithm <String>] [-Exclude <String[]>] [-Recurse]
- [<CommonParameters>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### LiteralPath
 ```
 Compare-FileHash -LiteralPath <String[]> -Destination <String> [-Algorithm <String>] [-Exclude <String[]>]
- [-Recurse] [<CommonParameters>]
+ [-Recurse] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -137,6 +137,21 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{Fill ProgressAction Description}}
+
+```yaml
+Type: ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
