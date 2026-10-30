@@ -1,8 +1,11 @@
 # PowerShell-HashCopy
 
-[![Build Status](https://dev.azure.com/markwragg/GitHub/_apis/build/status/markwragg.PowerShell-HashCopy?branchName=master)](https://dev.azure.com/markwragg/GitHub/_build/latest?definitionId=2&branchName=master) ![coverage](https://img.shields.io/badge/coverage-92%25-brightgreen.svg?maxAge=60)
+[![Build Status](https://dev.azure.com/markwragg/GitHub/_apis/build/status/markwragg.PowerShell-HashCopy?branchName=master)](https://dev.azure.com/markwragg/GitHub/_build/latest?definitionId=2&branchName=master)
+![coverage](https://img.shields.io/badge/coverage-92%25-brightgreen.svg?maxAge=60)
+[![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/hashcopy?label=PS%20Gallery)](https://www.powershellgallery.com/packages/hashcopy)
+[![PowerShell Gallery Downloads](https://img.shields.io/powershellgallery/dt/hashcopy?color=D3D3D3)](https://www.powershellgallery.com/packages/hashcopy)
 
-This PowerShell module contains cmdlets for copying and comparing specific files between two paths, where those files have been determined to have changed via a computed hash value. This is useful if you need to sync specific file changes from one directory to another but cannot trust the modified date of the files to determine which files have been modified (for example, if the source files has been cloned from a source control system and as a result the modified dates had changed). 
+This PowerShell module contains cmdlets for copying and comparing specific files between two paths, where those files have been determined to have changed via a computed hash value. This is useful if you need to sync specific file changes from one directory to another but cannot trust the modified date of the files to determine which files have been modified (for example, if the source files has been cloned from a source control system and as a result the modified dates had changed).
 
 You should of course be confident that if there is a difference between two files, it is the copy you have specified as being in the source `-Path` that you want to use to overwrite the copy in the `-Destination` path. New files (files that exist in the source path but not in the destination) will also be copied across, including any directories in their paths that may be missing in the destination folder.
 
@@ -24,7 +27,7 @@ You can use the `Copy-FileHash` cmdlet to sync a single path by providing it wit
 ```
 Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files
 ```
-This will compute the hash for all files in each directory (and all sub-directories, due to `-Recurse`) via the `Get-FileHash` cmdlet and then will copy any changed and new files from the source path to the destination path. 
+This will compute the hash for all files in each directory (and all sub-directories, due to `-Recurse`) via the `Get-FileHash` cmdlet and then will copy any changed and new files from the source path to the destination path.
 
 You can include all the sub-folders of the source `-Path` by adding `-Recurse`:
 ```
