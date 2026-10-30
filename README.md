@@ -15,7 +15,7 @@ You can synchronise an entire directory tree by using the `-Recurse` parameter.
 
 The module is published in the PSGallery, so if you have PowerShell 5 or newer can be installed by running:
 
-```
+```powershell
 Install-Module HashCopy -Scope CurrentUser
 ```
 
@@ -24,38 +24,45 @@ Install-Module HashCopy -Scope CurrentUser
 ### Copy-FileHash
 
 You can use the `Copy-FileHash` cmdlet to sync a single path by providing it with `-Path` and `-Destination` parameters:
-```
+
+```powershell
 Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files
 ```
 This will compute the hash for all files in each directory (and all sub-directories, due to `-Recurse`) via the `Get-FileHash` cmdlet and then will copy any changed and new files from the source path to the destination path.
 
 You can include all the sub-folders of the source `-Path` by adding `-Recurse`:
-```
+
+```powershell
 Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Recurse
 ```
 
 You can specify a `-LiteralPath` instead of a Path if you want to avoid wildcard characters from being interpreted as such:
-```
+
+```powershell
 Copy-FileHash -LiteralPath C:\Some\Files -Destination D:\Some\Other\Files -Recurse
 ```
 
 You can remove files from the Destination path that are not in the Source path by adding `-Mirror`:
-```
+
+```powershell
 Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Mirror
 ```
 
 You can have the destination file objects returned by adding `-PassThru`:
-```
+
+```powershell
 Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Recurse -PassThru
 ```
 
 You can Force the overwrite of read-only files in the Destination path by adding `-Force`:
-```
+
+```powershell
 Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Force
 ```
 
 You can specify the algorithm that `Get-FileHash` uses to create the Hash by using `-Algorithm`:
-```
+
+```powershell
 Copy-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Algorithm MD5
 ```
 Valid `-Algorithm` values are: SHA1 | SHA256 | SHA384 | SHA512 | MACTripleDES | MD5 | RIPEMD160.
@@ -65,11 +72,13 @@ Valid `-Algorithm` values are: SHA1 | SHA256 | SHA384 | SHA512 | MACTripleDES | 
 If you'd like to check which files will be copied from a source path before actually using `Copy-FileHash`, you can use `Compare-FileHash`. This cmdlet outputs file objects for any new or modified file having performed the same comparison as the `Copy-` cmdlet (e.g via using Get-FileHash of the source and destination file to determine if they are different).
 
 Check which files would be copied from one single directory to another:
-```
+
+```powershell
 Compare-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files
 ```
 Check which files would be copied between one directory tree and another (including all sub-directories):
-```
+
+```powershell
 Compare-FileHash -Path C:\Some\Files -Destination D:\Some\Other\Files -Recurse
 ```
 
