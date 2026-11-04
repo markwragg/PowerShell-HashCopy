@@ -1,6 +1,6 @@
 # PowerShell-HashCopy
 
-[![Build Status](https://dev.azure.com/markwragg/GitHub/_apis/build/status/markwragg.PowerShell-HashCopy?branchName=master)](https://dev.azure.com/markwragg/GitHub/_build/latest?definitionId=2&branchName=master)
+[![Build Status](https://github.com/markwragg/PowerShell-HashCopy/actions/workflows/build.yml/badge.svg)](https://github.com/markwragg/PowerShell-HashCopy/actions/workflows/build.yml)
 ![coverage](https://img.shields.io/badge/coverage-95%25-brightgreen.svg)
 [![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/hashcopy?label=PS%20Gallery)](https://www.powershellgallery.com/packages/hashcopy)
 [![PowerShell Gallery Downloads](https://img.shields.io/powershellgallery/dt/hashcopy?color=D3D3D3)](https://www.powershellgallery.com/packages/hashcopy)
